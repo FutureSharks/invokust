@@ -1,0 +1,23 @@
+from setuptools import setup
+
+setup(
+    name = 'invokust',
+    version = '0.1',
+    author = u'Max Williams',
+    author_email = 'futuresharks@gmail.com',
+    url = 'https://github.com/FutureSharks/invokust',
+    download_url  =  'https://github.com/FutureSharks/invokust/archive/0.1.tar.gz',
+    license = 'GPLv2',
+    description = 'A small wrapper for locust to allow automated load testing',
+    packages = ['invokust'],
+    install_requires = [
+        'locustio'
+    ],
+    keywords = ['testing', 'loadtest', 'lamba', 'locust'],
+    classifiers = [
+        'Topic :: Software Development :: Quality Assurance',
+        'Topic :: Software Development :: Testing',
+        'Topic :: Software Development :: Testing :: Traffic Generation',
+        'Programming Language :: Python :: 2.7'
+    ],
+)
