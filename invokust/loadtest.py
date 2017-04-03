@@ -43,6 +43,7 @@ class LoadTest(object):
                 'num_requests': value.num_requests,
                 'min_response_time': value.min_response_time,
                 'median_response_time': value.median_response_time,
+                'avg_response_time': value.avg_response_time,
                 'max_response_time': value.max_response_time,
                 'total_rps': value.total_rps,
                 'total_rpm': value.total_rps * 60
