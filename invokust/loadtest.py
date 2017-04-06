@@ -45,6 +45,14 @@ class LoadTest(object):
                 'median_response_time': value.median_response_time,
                 'avg_response_time': value.avg_response_time,
                 'max_response_time': value.max_response_time,
+                'response_times': value.response_times,
+                'response_time_percentiles': {
+                    55: value.get_response_time_percentile(0.55),
+                    65: value.get_response_time_percentile(0.65),
+                    75: value.get_response_time_percentile(0.75),
+                    85: value.get_response_time_percentile(0.85),
+                    95: value.get_response_time_percentile(0.95)
+                },
                 'total_rps': value.total_rps,
                 'total_rpm': value.total_rps * 60
             }
