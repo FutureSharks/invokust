@@ -65,11 +65,11 @@ class LoadTest(object):
         statistics['num_requests_fail'] = sum(
             [statistics['fail'][req]['occurences'] for req in statistics['fail']])
 
-        return json.dumps(statistics)
+        return statistics
 
     def sig_term_handler(self, signum, frame):
         logger.info("Received sigterm, exiting")
-        logger.info(self.stats())
+        logger.info(json.dumps(self.stats()))
         sys.exit(0)
 
     def sig_alarm_handler(self, signum, frame):
@@ -99,7 +99,7 @@ class LoadTest(object):
 
         except TimeOutException:
             events.quitting.fire()
-            logger.info(self.stats())
+            logger.info(json.dumps(self.stats()))
             logger.info("Run time limit reached: {0} seconds".format(self.timeout))
 
         except Exception as e:

@@ -28,7 +28,7 @@ settings = invokust.create_settings(
 loadtest = invokust.LoadTest(settings)
 loadtest.run()
 loadtest.stats()
-'{"fail": {}, "locust_host": "http://example.com", "num_requests": 10, "success": {"/": {"num_requests": 10, "total_rps": 0.9611445710106717, "median_response_time": 110, "total_rpm": 57.6686742606403, "request_type": "GET", "min_response_time": 107, "max_response_time": 143}}}'
+'{"num_requests_fail": 0, "num_requests": 10, "success": {"/": {"median_response_time": 210, "total_rpm": 48.13724156297892, "request_type": "GET", "min_response_time": 210, "response_times": {"720": 1, "210": 7, "820": 1, "350": 1}, "num_requests": 10, "response_time_percentiles": {"65": 210, "95": 820, "75": 350, "85": 720, "55": 210}, "total_rps": 0.802287359382982, "max_response_time": 824, "avg_response_time": 337.2}}, "locust_host": "http://example.com", "fail": {}, "num_requests_success": 10}'
 ```
 
 Running a load test without locust file:
@@ -60,7 +60,7 @@ settings = invokust.create_settings(
 loadtest = invokust.LoadTest(settings)
 loadtest.run()
 loadtest.stats()
-'{"fail": {}, "locust_host": "http://example.com", "num_requests": 10, "success": {"/": {"num_requests": 10, "total_rps": 0.9806702027934636, "median_response_time": 110, "total_rpm": 58.84021216760782, "request_type": "GET", "min_response_time": 105, "max_response_time": 140}}}'
+'{"num_requests_fail": 0, "num_requests": 10, "success": {"/": {"median_response_time": 330, "total_rpm": 40.53552561950598, "request_type": "GET", "min_response_time": 208, "response_times": {"230": 1, "1000": 1, "780": 1, "330": 1, "1100": 1, "210": 3, "790": 1, "670": 1}, "num_requests": 10, "response_time_percentiles": {"65": 780, "95": 1100, "75": 790, "85": 1000, "55": 670}, "total_rps": 0.6755920936584331, "max_response_time": 1111, "avg_response_time": 552.8}}, "locust_host": "http://example.com", "fail": {}, "num_requests_success": 10}'
 ```
 
 ## Running on AWS Lambda
@@ -130,11 +130,11 @@ terraform apply
 Finally invoke the function using the [AWS CLI](https://aws.amazon.com/cli/) (or use the [Lambda console](https://eu-central-1.console.aws.amazon.com/lambda/home?region=eu-central-1#/functions)):
 
 ```
-aws lambda invoke --function-name invokust_example output.log
+aws lambda invoke --function-name invokust_example lambda_output
 {
     "StatusCode": 200
 }
 
-cat output.log
-"{\"num_requests_fail\": 0, \"num_requests\": 10, \"success\": {\"/\": {\"num_requests\": 10, \"total_rps\": 1.0718836271241832, \"median_response_time\": 99, \"total_rpm\": 64.31301762745099, \"request_type\": \"GET\", \"min_response_time\": 95, \"max_response_time\": 100}}, \"locust_host\": \"http://example.com\", \"fail\": {}, \"num_requests_success\": 10}"
+cat lambda_output
+{"num_requests_fail": 0, "num_requests": 10, "success": {"/": {"median_response_time": 120, "total_rpm": 58.08219539770968, "request_type": "GET", "min_response_time": 102, "response_times": {"120": 8, "100": 2}, "num_requests": 10, "response_time_percentiles": {"65": 120, "95": 120, "75": 120, "85": 120, "55": 120}, "total_rps": 0.9680365899618281, "max_response_time": 120, "avg_response_time": 115.1}}, "memory_limit": "128", "remaining_time": 287401, "function_version": "$LATEST", "function_name": "invokust_example", "locust_host": "http://example.com", "log_group_name": "/aws/lambda/invokust_example", "fail": {}, "num_requests_success": 10, "invoked_function_arn": "arn:aws:lambda:eu-central-1:111111111111:function:invokust_example", "log_stream_name": "2017/04/27/[$LATEST]f730a111b1404e4511185f2e85775704", "aws_request_id": "d63ed907-1b1a-11e7-ad79-e1b811d67f11"}
 ```
