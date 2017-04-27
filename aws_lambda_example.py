@@ -18,4 +18,9 @@ def lambda_handler(event=None, context=None):
         logging.error("Locust exception {0}".format(repr(e)))
 
     else:
-        return loadtest.stats()
+        locust_stats = loadtest.stats()
+        lambda_runtime_info = invokust.get_lambda_runtime_info(context)
+        loadtest_results = locust_stats.copy()
+        loadtest_results.update(lambda_runtime_info)
+
+        return loadtest_results

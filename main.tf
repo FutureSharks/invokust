@@ -5,7 +5,7 @@ data "aws_caller_identity" "current" {}
 resource "aws_lambda_function" "invokust_example" {
   filename      = "invokust_example.zip"
   function_name = "invokust_example"
-  role          = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/lambda_basic_execution"
+  role          = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/service-role/lambda_basic_execution"
   handler       = "aws_lambda_example.lambda_handler"
   runtime       = "python2.7"
   timeout       = 300
