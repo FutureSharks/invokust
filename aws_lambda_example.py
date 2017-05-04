@@ -10,7 +10,11 @@ logging.basicConfig(level=logging.INFO)
 
 def lambda_handler(event=None, context=None):
     try:
-        settings = invokust.create_settings(from_environment=True)
+        if event:
+            settings = invokust.create_settings(**event)
+        else:
+            settings = invokust.create_settings(from_environment=True)
+
         loadtest = invokust.LoadTest(settings)
         loadtest.run(timeout=298)
 

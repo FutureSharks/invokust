@@ -138,3 +138,12 @@ aws lambda invoke --function-name invokust_example lambda_output
 cat lambda_output
 {"num_requests_fail": 0, "num_requests": 10, "success": {"/": {"median_response_time": 120, "total_rpm": 58.08219539770968, "request_type": "GET", "min_response_time": 102, "response_times": {"120": 8, "100": 2}, "num_requests": 10, "response_time_percentiles": {"65": 120, "95": 120, "75": 120, "85": 120, "55": 120}, "total_rps": 0.9680365899618281, "max_response_time": 120, "avg_response_time": 115.1}}, "memory_limit": "128", "remaining_time": 287401, "function_version": "$LATEST", "function_name": "invokust_example", "locust_host": "http://example.com", "log_group_name": "/aws/lambda/invokust_example", "fail": {}, "num_requests_success": 10, "invoked_function_arn": "arn:aws:lambda:eu-central-1:111111111111:function:invokust_example", "log_stream_name": "2017/04/27/[$LATEST]f730a111b1404e4511185f2e85775704", "aws_request_id": "d63ed907-1b1a-11e7-ad79-e1b811d67f11"}
 ```
+
+Or you can also pass settings directly to the function:
+
+```
+aws lambda invoke --function-name invokust_example --payload '{"locustfile": "locustfile_example.py", "host": "http://example.com", "num_requests": "10", "num_clients": "1", "hatch_rate": "1"}' lambda_output
+{
+    "StatusCode": 200
+}
+```
