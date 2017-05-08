@@ -26,15 +26,23 @@ def create_settings(from_environment=False, locustfile=None,
     named LOCUST_ + attribute name in upper case.
     '''
 
+    def _convert_unicode(data):
+        if isinstance(data, basestring):
+            return str(data)
+        elif isinstance(data, unicode):
+            return str(data)
+        else:
+            return data
+
     settings = type('', (), {})()
 
-    settings.from_environment = from_environment
-    settings.locustfile = locustfile
-    settings.classes = classes
-    settings.host = host
-    settings.num_requests = num_requests
-    settings.num_clients = num_clients
-    settings.hatch_rate = hatch_rate
+    settings.from_environment = _convert_unicode(from_environment)
+    settings.locustfile = _convert_unicode(locustfile)
+    settings.classes = _convert_unicode(classes)
+    settings.host = _convert_unicode(host)
+    settings.num_requests = _convert_unicode(num_requests)
+    settings.num_clients = _convert_unicode(num_clients)
+    settings.hatch_rate = _convert_unicode(hatch_rate)
 
     # Default settings that are not to be changed
     settings.no_web = True
@@ -52,8 +60,6 @@ def create_settings(from_environment=False, locustfile=None,
         for attribute in ['locustfile', 'classes', 'host', 'num_requests', 'num_clients', 'hatch_rate']:
             var_name = 'LOCUST_{0}'.format(attribute.upper())
             var_value = os.environ.get(var_name)
-            if var_value and var_value.isdigit():
-                var_value = int(var_value)
             setattr(settings, attribute, var_value)
 
     if settings.locustfile is None and settings.classes is None:
@@ -75,6 +81,9 @@ def create_settings(from_environment=False, locustfile=None,
     for attribute in ['classes', 'host', 'num_requests', 'num_clients', 'hatch_rate']:
         val = getattr(settings, attribute, None)
         if not val:
-            raise Exception('configuration error. LOCUST_{0} is not set'.format(attribute.upper()))
+            raise Exception('configuration error, attribute not set: {0}'.format(attribute))
+
+        if isinstance(val, str) and val.isdigit():
+            setattr(settings, attribute, int(val))
 
     return settings

@@ -38,7 +38,8 @@ class LoadTest(object):
         }
 
         for name, value in runners.locust_runner.stats.entries.items():
-            statistics['success'][name[0]] = {
+            locust_task_name = '{0}_{1}'.format(name[1], name[0])
+            statistics['success'][locust_task_name] = {
                 'request_type': name[1],
                 'num_requests': value.num_requests,
                 'min_response_time': value.min_response_time,
