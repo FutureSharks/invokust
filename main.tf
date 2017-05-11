@@ -7,7 +7,7 @@ resource "aws_lambda_function" "invokust_example" {
   function_name = "invokust_example"
   role          = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/service-role/lambda_basic_execution"
   handler       = "aws_lambda_example.lambda_handler"
-  runtime       = "python2.7"
+  runtime       = "python3.6"
   timeout       = 300
   description   = "A function that runs a locust load test"
   environment {
