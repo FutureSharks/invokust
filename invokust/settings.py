@@ -27,12 +27,8 @@ def create_settings(from_environment=False, locustfile=None,
     '''
 
     def _convert_unicode(data):
-        if isinstance(data, basestring):
-            return str(data)
-        elif isinstance(data, unicode):
-            return str(data)
-        else:
-            return data
+        if isinstance(data, bytes):
+            return data.decode('utf-8')
 
     settings = type('', (), {})()
 

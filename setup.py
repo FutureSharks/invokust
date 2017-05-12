@@ -11,13 +11,14 @@ setup(
     description = 'A small wrapper for locust to allow automated load testing',
     packages = ['invokust'],
     install_requires = [
-        'locustio'
+        'locustio==0.8a2',
+        'pyzmq'
     ],
     keywords = ['testing', 'loadtest', 'lamba', 'locust'],
     classifiers = [
         'Topic :: Software Development :: Quality Assurance',
         'Topic :: Software Development :: Testing',
         'Topic :: Software Development :: Testing :: Traffic Generation',
-        'Programming Language :: Python :: 2.7'
+        'Programming Language :: Python :: 3.6'
     ],
 )

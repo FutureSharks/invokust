@@ -58,7 +58,7 @@ class LoadTest(object):
                 'total_rpm': value.total_rps * 60
             }
 
-        for id, error in runners.locust_runner.errors.viewitems():
+        for id, error in runners.locust_runner.errors.items():
             statistics['fail'][error.name] = error.to_dict()
 
         statistics['num_requests_success'] = sum(
