@@ -26,19 +26,15 @@ def create_settings(from_environment=False, locustfile=None,
     named LOCUST_ + attribute name in upper case.
     '''
 
-    def _convert_unicode(data):
-        if isinstance(data, bytes):
-            return data.decode('utf-8')
-
     settings = type('', (), {})()
 
-    settings.from_environment = _convert_unicode(from_environment)
-    settings.locustfile = _convert_unicode(locustfile)
-    settings.classes = _convert_unicode(classes)
-    settings.host = _convert_unicode(host)
-    settings.num_requests = _convert_unicode(num_requests)
-    settings.num_clients = _convert_unicode(num_clients)
-    settings.hatch_rate = _convert_unicode(hatch_rate)
+    settings.from_environment = from_environment
+    settings.locustfile = locustfile
+    settings.classes = classes
+    settings.host = host
+    settings.num_requests = num_requests
+    settings.num_clients = num_clients
+    settings.hatch_rate = hatch_rate
 
     # Default settings that are not to be changed
     settings.no_web = True
