@@ -11,3 +11,4 @@ To do
   - Update to be able to target a specific RPM
   - Add an interactive mode where threads can be started/stopped while load test is running
   - When time limit is reached, collect last results before exiting
+- Occasional Lambda error message "RequestId: xxxxx-3f19-11e7-a1d1-xxxxxxx Process exited before completing request"

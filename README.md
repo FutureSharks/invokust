@@ -181,14 +181,92 @@ load_test = LambdaLoadTest(
 )
 
 load_test.run()
+INFO:root:
+Starting load test
+Function: lambda_locust
+Ramp time: 0
+Threads: 2
+Lambda payload: {'locustfile': 'locustfile_example.py', 'host': 'https://example.com', 'num_requests': '20', 'num_clients': '1', 'hatch_rate': 1}
+
+INFO:root:thread started
+INFO:root:threads: 1, rpm: 0, run_time: 0, requests_total: 0, request_fail_ratio: 0, invocation_error_ratio: 0
+INFO:root:threads: 1, rpm: 0, run_time: 3, requests_total: 0, request_fail_ratio: 0, invocation_error_ratio: 0
+INFO:root:thread started
+INFO:invokust.aws_lambda.lambda_load_test:Invocation complete. Requests (errors): 20 (0), execution time: 2982, sleeping: 0
+INFO:root:threads: 2, rpm: 368, run_time: 6, requests_total: 20, request_fail_ratio: 0.0, invocation_error_ratio: 0.0
+INFO:invokust.aws_lambda.lambda_load_test:Invocation complete. Requests (errors): 20 (0), execution time: 2896, sleeping: 0
+INFO:invokust.aws_lambda.lambda_load_test:Invocation complete. Requests (errors): 20 (0), execution time: 3023, sleeping: 0
+INFO:root:threads: 2, rpm: 770, run_time: 9, requests_total: 60, request_fail_ratio: 0.0, invocation_error_ratio: 0.0
+INFO:invokust.aws_lambda.lambda_load_test:Invocation complete. Requests (errors): 20 (0), execution time: 3041, sleeping: 0
+INFO:invokust.aws_lambda.lambda_load_test:Invocation complete. Requests (errors): 20 (0), execution time: 3071, sleeping: 0
+INFO:root:threads: 2, rpm: 768, run_time: 12, requests_total: 100, request_fail_ratio: 0.0, invocation_error_ratio: 0.0
+INFO:invokust.aws_lambda.lambda_load_test:Invocation complete. Requests (errors): 20 (0), execution time: 3031, sleeping: 0
+INFO:invokust.aws_lambda.lambda_load_test:Invocation complete. Requests (errors): 20 (0), execution time: 2965, sleeping: 0
+INFO:root:threads: 2, rpm: 782, run_time: 15, requests_total: 140, request_fail_ratio: 0.0, invocation_error_ratio: 0.0
+INFO:invokust.aws_lambda.lambda_load_test:Invocation complete. Requests (errors): 20 (0), execution time: 2957, sleeping: 0
+INFO:invokust.aws_lambda.lambda_load_test:Invocation complete. Requests (errors): 20 (0), execution time: 3069, sleeping: 0
+INFO:root:threads: 2, rpm: 779, run_time: 18, requests_total: 180, request_fail_ratio: 0.0, invocation_error_ratio: 0.0
+INFO:invokust.aws_lambda.lambda_load_test:Invocation complete. Requests (errors): 20 (0), execution time: 3015, sleeping: 0
+INFO:invokust.aws_lambda.lambda_load_test:Invocation complete. Requests (errors): 20 (0), execution time: 3018, sleeping: 0
+INFO:root:threads: 2, rpm: 771, run_time: 21, requests_total: 220, request_fail_ratio: 0.0, invocation_error_ratio: 0.0
+INFO:invokust.aws_lambda.lambda_load_test:Invocation complete. Requests (errors): 20 (0), execution time: 3055, sleeping: 0
+INFO:invokust.aws_lambda.lambda_load_test:Invocation complete. Requests (errors): 20 (0), execution time: 3015, sleeping: 0
+INFO:root:threads: 2, rpm: 771, run_time: 24, requests_total: 260, request_fail_ratio: 0.0, invocation_error_ratio: 0.0
+INFO:invokust.aws_lambda.lambda_load_test:Invocation complete. Requests (errors): 20 (0), execution time: 3007, sleeping: 0
+INFO:invokust.aws_lambda.lambda_load_test:Invocation complete. Requests (errors): 20 (0), execution time: 3012, sleeping: 0
+INFO:root:threads: 2, rpm: 779, run_time: 27, requests_total: 300, request_fail_ratio: 0.0, invocation_error_ratio: 0.0
+INFO:invokust.aws_lambda.lambda_load_test:Invocation complete. Requests (errors): 20 (0), execution time: 3029, sleeping: 0
+INFO:invokust.aws_lambda.lambda_load_test:Invocation complete. Requests (errors): 20 (0), execution time: 3037, sleeping: 0
+INFO:root:threads: 2, rpm: 773, run_time: 30, requests_total: 340, request_fail_ratio: 0.0, invocation_error_ratio: 0.0
+INFO:invokust.aws_lambda.lambda_load_test:Invocation complete. Requests (errors): 20 (0), execution time: 3078, sleeping: 0
+INFO:invokust.aws_lambda.lambda_load_test:Invocation complete. Requests (errors): 20 (0), execution time: 3100, sleeping: 0
+INFO:root:threads: 2, rpm: 758, run_time: 33, requests_total: 380, request_fail_ratio: 0.0, invocation_error_ratio: 0.0
+INFO:root:Time limit reached
+INFO:root:Waiting for threads to exit...
+INFO:invokust.aws_lambda.lambda_load_test:Invocation complete. Requests (errors): 20 (0), execution time: 2965, sleeping: 0
+INFO:root:thread finished
+INFO:invokust.aws_lambda.lambda_load_test:Invocation complete. Requests (errors): 20 (0), execution time: 3033, sleeping: 0
+INFO:root:thread finished
 
 load_test.get_summary_stats()
-{'lambda_invocation_count': 49, 'total_lambda_execution_time': 149999, 'requests_total': 980, 'request_fail_ratio': 0.0, 'invocation_error_ratio': 0.0}
+{'lambda_invocation_count': 21, 'total_lambda_execution_time': 63399, 'requests_total': 420, 'request_fail_ratio': 0.0, 'invocation_error_ratio': 0.0}
 ```
 
 There is also an example CLI tool for running a load test:
 
 ```
-./invokr.py --function_name=lambda_locust --locust_file=locustfile_example.py --locust_host=https://example.com --threads=1 --time_limit=30
+$ ./invokr.py --function_name=lambda_locust --locust_file=locustfile_example.py --locust_host=https://example.com --threads=1 --time_limit=30 --locust_requests=20
+2017-05-22 20:16:22,432 INFO   MainThread
+Starting load test
+Function: lambda_locust
+Ramp time: 0
+Threads: 1
+Lambda payload: {'locustfile': 'locustfile_example.py', 'host': 'https://example.com', 'num_requests': 20, 'num_clients': 20, 'hatch_rate': 10}
 
+2017-05-22 20:16:22,432 INFO   thread_1    thread started
+2017-05-22 20:16:22,436 INFO   MainThread  threads: 1, rpm: 0, run_time: 0, requests_total: 0, request_fail_ratio: 0, invocation_error_ratio: 0
+2017-05-22 20:16:25,440 INFO   MainThread  threads: 1, rpm: 0, run_time: 3, requests_total: 0, request_fail_ratio: 0, invocation_error_ratio: 0
+2017-05-22 20:16:27,983 INFO   thread_1    Invocation complete. Requests (errors): 20 (0), execution time: 5186, sleeping: 0
+2017-05-22 20:16:28,446 INFO   MainThread  threads: 1, rpm: 216, run_time: 6, requests_total: 20, request_fail_ratio: 0.0, invocation_error_ratio: 0.0
+2017-05-22 20:16:31,448 INFO   MainThread  threads: 1, rpm: 216, run_time: 9, requests_total: 20, request_fail_ratio: 0.0, invocation_error_ratio: 0.0
+2017-05-22 20:16:32,860 INFO   thread_1    Invocation complete. Requests (errors): 20 (0), execution time: 4798, sleeping: 0
+2017-05-22 20:16:34,453 INFO   MainThread  threads: 1, rpm: 246, run_time: 12, requests_total: 40, request_fail_ratio: 0.0, invocation_error_ratio: 0.0
+2017-05-22 20:16:37,454 INFO   MainThread  threads: 1, rpm: 246, run_time: 15, requests_total: 40, request_fail_ratio: 0.0, invocation_error_ratio: 0.0
+2017-05-22 20:16:38,110 INFO   thread_1    Invocation complete. Requests (errors): 20 (0), execution time: 5176, sleeping: 0
+2017-05-22 20:16:40,458 INFO   MainThread  threads: 1, rpm: 229, run_time: 18, requests_total: 60, request_fail_ratio: 0.0, invocation_error_ratio: 0.0
+2017-05-22 20:16:43,072 INFO   thread_1    Invocation complete. Requests (errors): 20 (0), execution time: 4882, sleeping: 0
+2017-05-22 20:16:43,464 INFO   MainThread  threads: 1, rpm: 242, run_time: 21, requests_total: 80, request_fail_ratio: 0.0, invocation_error_ratio: 0.0
+2017-05-22 20:16:46,466 INFO   MainThread  threads: 1, rpm: 242, run_time: 24, requests_total: 80, request_fail_ratio: 0.0, invocation_error_ratio: 0.0
+2017-05-22 20:16:48,237 INFO   thread_1    Invocation complete. Requests (errors): 20 (0), execution time: 5041, sleeping: 0
+2017-05-22 20:16:49,467 INFO   MainThread  threads: 1, rpm: 232, run_time: 27, requests_total: 100, request_fail_ratio: 0.0, invocation_error_ratio: 0.0
+2017-05-22 20:16:52,468 INFO   MainThread  threads: 1, rpm: 232, run_time: 30, requests_total: 100, request_fail_ratio: 0.0, invocation_error_ratio: 0.0
+2017-05-22 20:16:53,347 INFO   thread_1    Invocation complete. Requests (errors): 20 (0), execution time: 5041, sleeping: 0
+2017-05-22 20:16:55,468 INFO   MainThread  threads: 1, rpm: 235, run_time: 33, requests_total: 120, request_fail_ratio: 0.0, invocation_error_ratio: 0.0
+2017-05-22 20:16:55,468 INFO   MainThread  Time limit reached
+2017-05-22 20:16:55,468 INFO   MainThread  Waiting for threads to exit...
+2017-05-22 20:16:58,666 INFO   thread_1    Invocation complete. Requests (errors): 20 (0), execution time: 5209, sleeping: 0
+2017-05-22 20:16:58,667 INFO   thread_1    thread finished
+2017-05-22 20:16:59,484 INFO   MainThread  Load test finished. lambda_invocation_count: 7, total_lambda_execution_time: 35333, requests_total: 140, request_fail_ratio: 0.0, invocation_error_ratio: 0.0
+2017-05-22 20:16:59,484 INFO   MainThread  Aggregated results: {'success': {'GET_/': {'median_response_time': 285.7142857142857, 'total_rps': 19.753860147907517, 'avg_response_time': 615.4214285714286, 'max_response_time': 1703, 'min_response_time': 100, 'response_times': {'1100': 6, '1400': 9, '120': 2, '140': 14, '960': 3, '180': 9, '160': 11, '260': 6, '300': 3, '1200': 6, '340': 3, '200': 12, '1700': 2, '220': 9, '1300': 10, '380': 3, '440': 5, '240': 5, '1000': 2, '480': 2, '1600': 2, '1500': 9, '100': 1, '360': 1, '540': 1, '940': 1, '280': 1, '320': 1, '400': 1}, 'total_rpm': 1185.231608874451}}, 'fail': {}, 'num_requests': 140, 'num_requests_fail': 0, 'num_requests_success': 140, 'total_time': 35333, 'invocations': 7, 'approximate_cost': 7.4824e-05}
+2017-05-22 20:16:59,484 INFO   MainThread  Exiting...
 ```

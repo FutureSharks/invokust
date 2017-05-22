@@ -193,6 +193,13 @@ class LambdaLoadTest(object):
                 result = True
         return result
 
+    def stop_threads(self):
+        '''
+        Sets a boolean to stop threads
+        '''
+        with self.lock:
+            self.exit_threads = True
+
     def start_new_thread(self):
         '''
         Creates a new load test thread
@@ -272,6 +279,8 @@ class LambdaLoadTest(object):
 
             time.sleep(sleep_time)
 
+        self.logger.info('thread finished')
+
     def run(self):
         '''
         Starts the load test, periodically prints statistics and starts new threads
@@ -300,7 +309,7 @@ class LambdaLoadTest(object):
                         self.request_fail_ratio()
                     )
                 )
-                self.exit_threads = True
+                self.stop_threads()
                 self.logger.info('Waiting for threads to exit...')
                 while self.get_thread_count() > 0:
                     time.sleep(1)
@@ -310,6 +319,10 @@ class LambdaLoadTest(object):
 
             if self.time_limit and self.get_run_time() > self.time_limit:
                 self.logger.info('Time limit reached')
-                break
+                self.stop_threads()
+                while self.get_thread_count() > 0:
+                    time.sleep(1)
+                else:
+                    break
 
             time.sleep(self.print_stats_delay)
