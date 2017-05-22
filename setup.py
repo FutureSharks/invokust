@@ -2,16 +2,21 @@ from setuptools import setup
 
 setup(
     name = 'invokust',
-    version = '0.3',
+    version = '0.4',
     author = u'Max Williams',
     author_email = 'futuresharks@gmail.com',
     url = 'https://github.com/FutureSharks/invokust',
-    download_url  =  'https://github.com/FutureSharks/invokust/archive/0.3.tar.gz',
+    download_url  =  'https://github.com/FutureSharks/invokust/archive/0.4.tar.gz',
     license = 'GPLv2',
-    description = 'A small wrapper for locust to allow automated load testing',
-    packages = ['invokust'],
+    description = 'A small wrapper for locust to allow load testing on AWS Lambda',
+    scripts = ['invokr.py'],
+    packages = [
+        'invokust',
+        'invokust.aws_lambda',
+    ],
     install_requires = [
         'locustio==0.8a2',
+        'boto3',
         'pyzmq'
     ],
     keywords = ['testing', 'loadtest', 'lamba', 'locust'],

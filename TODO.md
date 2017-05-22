@@ -1,5 +1,13 @@
 To do
 
 - `LOCUST_CLASSES` environment variable does not work
-- Write a tool for triggering the lambda function in a parallel loops to achieve a specific RPM
-- Write a tool to aggregate the statistics from CloudWatch across multiple invocations
+- `results_aggregator` changes:
+  - Create timechart data of RPS from each element of results
+  - Reduce amount of buckets in data returned by `_merge_response_times`
+  - Aggregate response_time_percentiles but how?
+- Document `results_aggregator`
+- `LambdaLoadTest` changes:
+  - RPM reported when ramping up is incorrect due to sleep_time
+  - Update to be able to target a specific RPM
+  - Add an interactive mode where threads can be started/stopped while load test is running
+  - When time limit is reached, collect last results before exiting

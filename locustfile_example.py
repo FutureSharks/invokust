@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import logging
-
 from locust import HttpLocust, TaskSet, task
 
-logger = logging.getLogger(__name__)
-
-class Task(TaskSet):
+class GetHomePageTask(TaskSet):
     @task()
     def get_home_page(self):
         '''
@@ -15,4 +11,6 @@ class Task(TaskSet):
         self.client.get("/")
 
 class WebsiteUser(HttpLocust):
-    task_set = Task
+    task_set = GetHomePageTask
+    min_wait = 0
+    max_wait = 0
