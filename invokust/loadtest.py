@@ -5,7 +5,7 @@ import gevent
 import json
 import signal
 import logging
-
+import time
 from locust import runners, events
 
 
@@ -15,12 +15,14 @@ logger = logging.getLogger(__name__)
 class TimeOutException(Exception): pass
 
 
-class LoadTest(object):
+class LocustLoadTest(object):
     '''
-    The LoadTest runs the load test and returns statistics
+    Runs a Locust load test and returns statistics
     '''
     def __init__(self, settings):
         self.settings = settings
+        self.start_time = None
+        self.end_time = None
         signal.signal(signal.SIGALRM, self.sig_alarm_handler)
         gevent.signal(signal.SIGTERM, self.sig_term_handler)
 
@@ -34,7 +36,9 @@ class LoadTest(object):
             'num_requests': runners.locust_runner.stats.num_requests,
             'num_requests_success': 0,
             'num_requests_fail': 0,
-            'locust_host': runners.locust_runner.host
+            'locust_host': runners.locust_runner.host,
+            'start_time': self.start_time,
+            'end_time': self.end_time
         }
 
         for name, value in runners.locust_runner.stats.entries.items():
@@ -59,7 +63,9 @@ class LoadTest(object):
             }
 
         for id, error in runners.locust_runner.errors.items():
-            statistics['fail'][error.name] = error.to_dict()
+            error_dict = error.to_dict()
+            locust_task_name = '{0}_{1}'.format(error_dict['method'], error_dict['name'])
+            statistics['fail'][locust_task_name] = error_dict
 
         statistics['num_requests_success'] = sum(
             [statistics['success'][req]['num_requests'] for req in statistics['success']])
@@ -93,7 +99,9 @@ class LoadTest(object):
             runners.locust_runner = runners.LocalLocustRunner(self.settings.classes,
                 self.settings)
             runners.locust_runner.start_hatching(wait=True)
+            self.start_time = time.time()
             runners.locust_runner.greenlet.join()
+            self.end_time = time.time()
             logger.info('Locust completed {0} requests with {1} errors'.format(
                 self.settings.num_requests,
                 len(runners.locust_runner.errors)))
