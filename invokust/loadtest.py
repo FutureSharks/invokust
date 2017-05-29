@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os
+import sys
 import gevent
 import json
 import signal
