@@ -107,10 +107,11 @@ class LocustLoadTest(object):
                 len(runners.locust_runner.errors)))
 
         except TimeOutException:
-            events.quitting.fire()
             logger.info(json.dumps(self.stats()))
             logger.info("Run time limit reached: {0} seconds".format(self.timeout))
 
         except Exception as e:
-            events.quitting.fire()
             logger.error("Locust exception {0}".format(repr(e)))
+
+        finally:
+            events.quitting.fire()
