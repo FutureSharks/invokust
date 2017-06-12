@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name = 'invokust',
-    version = '0.41',
+    version = '0.42',
     author = 'Max Williams',
     author_email = 'futuresharks@gmail.com',
     url = 'https://github.com/FutureSharks/invokust',
@@ -17,7 +17,8 @@ setup(
     install_requires = [
         'locustio==0.8a2',
         'boto3',
-        'pyzmq'
+        'pyzmq',
+        'numpy'
     ],
     keywords = ['testing', 'loadtest', 'lamba', 'locust'],
     classifiers = [

@@ -3,8 +3,7 @@ To do
 - `LOCUST_CLASSES` environment variable does not work
 - `results_aggregator` changes:
   - Create timechart data of RPS from each element of results
-  - Reduce amount of buckets in data returned by `_merge_response_times`
-  - Aggregate response_time_percentiles but how?
+  - How to aggregate response_time_percentiles?
 - Show an example for `results_aggregator`
 - `LambdaLoadTest` changes:
   - RPM reported when ramping up is incorrect due to sleep_time
