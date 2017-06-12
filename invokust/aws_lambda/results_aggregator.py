@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from collections import Counter
+from numpy import histogram
 
 def results_aggregator(results):
     '''
@@ -21,8 +21,15 @@ def results_aggregator(results):
         return float(sum(numbers)) / max(len(numbers), 1)
 
     def _merge_response_times(response_times):
-        merged_response_times = sum((Counter(dict(x)) for x in response_times),Counter())
-        return dict(merged_response_times)
+        flat_list = []
+        for r_time in response_times:
+            for key, value in r_time.items():
+                flat_list.extend([int(key)] * value)
+        hist, bins = histogram(flat_list)
+        return {
+            'histogram': hist.tolist(),
+            'bins': bins.tolist(),
+        }
 
     def _get_min(data, key):
         try:
