@@ -34,7 +34,6 @@ class LambdaLoadTest(object):
         self.lambda_invocation_errors = 0
         self.lambda_invocation_count = 0
         self.lambda_total_execution_time = 0
-        self.requests_success = 0
         self.requests_fail = 0
         self.requests_total = 0
         self.locust_results = []
@@ -93,13 +92,6 @@ class LambdaLoadTest(object):
         with self.lock:
             self.requests_total += requests
 
-    def log_requests_success(self, requests):
-        '''
-        Increases total request success count
-        '''
-        with self.lock:
-            self.requests_success += requests
-
     def log_requests_fail(self, requests):
         '''
         Increases total request fail count
@@ -109,10 +101,10 @@ class LambdaLoadTest(object):
 
     def request_fail_ratio(self):
         '''
-        Returns ratio of fail to success requests
+        Returns ratio of failed to total requests
         '''
         try:
-            return self.requests_fail/float(self.requests_success)
+            return self.requests_fail/float(self.requests_total)
         except ZeroDivisionError:
             return 0
 
@@ -256,7 +248,6 @@ class LambdaLoadTest(object):
             lambda_execution_time = 300000 - results['remaining_time']
 
             self.log_locust_results(results)
-            self.log_requests_success(results['num_requests_success'])
             self.log_requests_fail(results['num_requests_fail'])
             self.log_requests_total(results['num_requests'])
             self.update_thread_data(thread_id, 'rpm', total_rpm)
