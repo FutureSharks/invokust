@@ -12,3 +12,4 @@ To do
 - Occasional Lambda error messages:
   - "RequestId: xxxxx-3f19-11e7-a1d1-xxxxxxx Process exited before completing request"
   - Lambda invocation failed: LoopExit('This operation would block forever', <Hub at 0x7f8710791e88 epoll pending=0 ref=0 fileno=67 resolver=<gevent.resolver_thread.Resolver at 0x7f87106deba8 pool=<ThreadPool at 0x7f87106debe0 0/1/10>> threadpool=<ThreadPool at 0x7f87106debe0 0/1/10>>)
+- `num_requests_success` and `num_requests` are the same

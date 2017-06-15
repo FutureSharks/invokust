@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name = 'invokust',
-    version = '0.42',
+    version = '0.43',
     author = 'Max Williams',
     author_email = 'futuresharks@gmail.com',
     url = 'https://github.com/FutureSharks/invokust',

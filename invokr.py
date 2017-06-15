@@ -19,13 +19,16 @@ def parse_arguments():
     return p.parse_args()
 
 def print_stats_exit(load_test_state):
-    logging.info((
-        'Load test finished. lambda_invocation_count: {lambda_invocation_count}, '
-        'total_lambda_execution_time: {total_lambda_execution_time}, '
-        'requests_total: {requests_total}, '
-        'request_fail_ratio: {request_fail_ratio}, '
-        'invocation_error_ratio: {invocation_error_ratio}').format(**load_test_state.get_summary_stats()))
-    logging.info('Aggregated results: {0}'.format(json.dumps(results_aggregator(load_test_state.get_locust_results()))))
+    summ_stats = load_test_state.get_summary_stats()
+    agg_results = results_aggregator(load_test_state.get_locust_results())
+    agg_results['request_fail_ratio'] = summ_stats['request_fail_ratio']
+    agg_results['invocation_error_ratio'] = summ_stats['invocation_error_ratio']
+    agg_results['locust_settings'] = load_test_state.lambda_payload
+    agg_results['lambda_function_name'] = load_test_state.lambda_function_name
+    agg_results['threads'] = load_test_state.threads
+    agg_results['ramp_time'] = load_test_state.ramp_time
+    agg_results['time_limit'] = load_test_state.time_limit
+    logging.info('Aggregated results: {0}'.format(json.dumps(agg_results)))
     logging.info('Exiting...')
     sys.exit(0)
 

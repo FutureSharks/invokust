@@ -154,12 +154,6 @@ class LambdaLoadTest(object):
         '''
         return self.locust_results
 
-    def get_locust_results(self):
-        '''
-        Returns a list of locust results
-        '''
-        return self.locust_results
-
     def log_lambda_execution_time(self, time):
         '''
         Add Lambda exection time to the total

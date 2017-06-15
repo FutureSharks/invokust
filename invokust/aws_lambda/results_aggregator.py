@@ -47,14 +47,14 @@ def results_aggregator(results):
         dollar_cost_per_128mb_100ms = 0.000000208
         dollar_cost_per_invocation = 0.0000002
         memory_cost_multiplier = int(memory_limit) / 128.0
-        time_in_100ms_lots = int(total_time / 100.0)
+        time_in_100ms_lots = int(total_lambda_execution_time / 100.0)
         invocation_cost = invocation_count * 0.0000002
         execution_time_cost = time_in_100ms_lots * dollar_cost_per_128mb_100ms * memory_cost_multiplier
         return (invocation_cost + execution_time_cost)
 
     successful_tasks = _flatten_unique([list(stat['success'].keys()) for stat in results])
     failed_tasks = _flatten_unique([list(stat['fail'].keys()) for stat in results])
-    total_time = sum([(300000 - stat['remaining_time']) for stat in results])
+    total_lambda_execution_time = sum([(300000 - stat['remaining_time']) for stat in results])
     memory_limit = _get_max(results, 'memory_limit')
 
     agg_results = {
@@ -63,9 +63,9 @@ def results_aggregator(results):
         'num_requests': sum([stat['num_requests'] for stat in results]),
         'num_requests_fail': sum([stat['num_requests_fail'] for stat in results]),
         'num_requests_success': sum([stat['num_requests_success'] for stat in results]),
-        'total_time': total_time,
-        'invocations': len(results),
-        'approximate_cost': _calculate_aws_lambda_cost(total_time, memory_limit, len(results))
+        'total_lambda_execution_time': total_lambda_execution_time,
+        'lambda_invocations': len(results),
+        'approximate_cost': _calculate_aws_lambda_cost(total_lambda_execution_time, memory_limit, len(results))
     }
 
     for task in successful_tasks:
