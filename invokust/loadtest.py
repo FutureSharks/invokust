@@ -31,11 +31,10 @@ class LocustLoadTest(object):
         Returns the statistics from the load test in JSON
         '''
         statistics = {
-            'success': {},
-            'fail': {},
+            'requests': {},
+            'failures': {},
             'num_requests': runners.locust_runner.stats.num_requests,
-            'num_requests_success': 0,
-            'num_requests_fail': 0,
+            'num_requests_fail': runners.locust_runner.stats.num_failures,
             'locust_host': runners.locust_runner.host,
             'start_time': self.start_time,
             'end_time': self.end_time
@@ -43,7 +42,7 @@ class LocustLoadTest(object):
 
         for name, value in runners.locust_runner.stats.entries.items():
             locust_task_name = '{0}_{1}'.format(name[1], name[0])
-            statistics['success'][locust_task_name] = {
+            statistics['requests'][locust_task_name] = {
                 'request_type': name[1],
                 'num_requests': value.num_requests,
                 'min_response_time': value.min_response_time,
@@ -65,12 +64,7 @@ class LocustLoadTest(object):
         for id, error in runners.locust_runner.errors.items():
             error_dict = error.to_dict()
             locust_task_name = '{0}_{1}'.format(error_dict['method'], error_dict['name'])
-            statistics['fail'][locust_task_name] = error_dict
-
-        statistics['num_requests_success'] = sum(
-            [statistics['success'][req]['num_requests'] for req in statistics['success']])
-        statistics['num_requests_fail'] = sum(
-            [statistics['fail'][req]['occurences'] for req in statistics['fail']])
+            statistics['failures'][locust_task_name] = error_dict
 
         return statistics
 
