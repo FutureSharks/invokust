@@ -58,8 +58,8 @@ def results_aggregator(results):
     memory_limit = _get_max(results, 'memory_limit')
 
     agg_results = {
-        'requests': dict.fromkeys(request_tasks, {}),
-        'failures': dict.fromkeys(failed_tasks, {}),
+        'requests': {key: {} for key in request_tasks},
+        'failures': {key: {} for key in failed_tasks},
         'num_requests': sum([stat['num_requests'] for stat in results]),
         'num_requests_fail': sum([stat['num_requests_fail'] for stat in results]),
         'total_lambda_execution_time': total_lambda_execution_time,

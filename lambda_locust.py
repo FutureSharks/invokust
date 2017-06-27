@@ -17,7 +17,7 @@ def handler(event=None, context=None):
             settings = create_settings(from_environment=True)
 
         loadtest = LocustLoadTest(settings)
-        loadtest.run(timeout=240)
+        loadtest.run()
 
     except Exception as e:
         logging.error("Locust exception {0}".format(repr(e)))
