@@ -6,6 +6,9 @@ import sys
 import json
 from invokust import LambdaLoadTest, results_aggregator
 
+def print_stat(type, name, req_count, median, avg, min, max, rps):
+	return "%-7s %-50s %10s %9s %9s %9s %9s %10s" % (type, name, req_count, median, avg, min, max, rps)
+
 def parse_arguments():
     p = argparse.ArgumentParser(description='Runs a Locust load tests on AWS Lambda in parallel')
     p.add_argument('-n', '--function_name', help='Lambda function name', required=True)
@@ -29,6 +32,20 @@ def print_stats_exit(load_test_state):
     agg_results['ramp_time'] = load_test_state.ramp_time
     agg_results['time_limit'] = load_test_state.time_limit
     logging.info('Aggregated results: {0}'.format(json.dumps(agg_results)))
+    logging.info('===========================================================================================================================')
+    logging.info(print_stat('TYPE', 'NAME', '#REQUESTS', 'MEDIAN', 'AVERAGE', 'MIN', 'MAX', '#REQS/SEC'))
+    logging.info('===========================================================================================================================')
+
+    reqs = agg_results["requests"]
+    for k in reqs.keys():
+        k_arr = k.split('_')
+        type = k_arr[0]
+        del k_arr[0]
+        name = '_'.join(k_arr)
+        logging.info(print_stat(type, name, reqs[k]["num_requests"], round(reqs[k]["median_response_time"], 2),
+                                round(reqs[k]["avg_response_time"], 2), round(reqs[k]["min_response_time"], 2),
+                                round(reqs[k]["max_response_time"], 2), round(reqs[k]["total_rps"], 2)))
+
     logging.info('Exiting...')
     sys.exit(0)
 
