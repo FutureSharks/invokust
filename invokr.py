@@ -4,7 +4,7 @@ import argparse
 import logging
 import sys
 import json
-from invokust import LambdaLoadTest, results_aggregator
+from invokust.aws_lambda import LambdaLoadTest, results_aggregator
 
 def parse_arguments():
     p = argparse.ArgumentParser(description='Runs a Locust load tests on AWS Lambda in parallel')

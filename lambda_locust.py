@@ -5,7 +5,8 @@ sys.path.insert(0, "python-packages")
 
 import logging
 import json
-from invokust import create_settings, LocustLoadTest, get_lambda_runtime_info
+from invokust.aws_lambda import get_lambda_runtime_info
+from invokust import LocustLoadTest, create_settings
 
 logging.basicConfig(level=logging.INFO)
 
