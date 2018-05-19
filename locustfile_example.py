@@ -9,6 +9,13 @@ class GetHomePageTask(TaskSet):
         Gets /
         '''
         self.client.get("/")
+    
+    @task()
+    def get_another_page(self):
+        '''
+         Post /
+        '''
+        response=self.client.post("/post", {"username":"password"})
 
 class WebsiteUser(HttpLocust):
     task_set = GetHomePageTask
