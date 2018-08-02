@@ -4,7 +4,7 @@ import argparse
 import logging
 import sys
 import json
-from invokust import LambdaLoadTest, results_aggregator
+from invokust.aws_lambda import LambdaLoadTest, results_aggregator
 
 def print_stat(type, name, req_count, median, avg, min, max, rps):
 	return "%-7s %-50s %10s %9s %9s %9s %9s %10s" % (type, name, req_count, median, avg, min, max, rps)

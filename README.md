@@ -160,7 +160,7 @@ Lambda function execution time is limited to a maximum of 5 minutes. To run a re
 
 ```python
 import logging
-from invokust import LambdaLoadTest
+from invokust.aws_lambda import LambdaLoadTest
 
 logging.basicConfig(level=logging.INFO)
 
