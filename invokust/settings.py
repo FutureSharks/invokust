@@ -7,7 +7,7 @@ from locust.main import load_locustfile
 
 def create_settings(from_environment=False, locustfile=None,
         classes=None, host=None, num_requests=None, num_clients=None,
-        hatch_rate=None):
+        hatch_rate=None, reset_stats=False):
     '''
     Returns a settings object to be used by a LocalLocustRunner.
 
@@ -20,6 +20,7 @@ def create_settings(from_environment=False, locustfile=None,
         num_requests: number of requests to send
         num_clients: number of clients to simulate in load test
         hatch_rate: number of clients per second to start
+        reset_stats: Whether to reset stats after all clients are hatched
 
     If from_environment is set to True then this function will attempt to set
     the attributes from environment variables. The environment variables are
@@ -35,6 +36,7 @@ def create_settings(from_environment=False, locustfile=None,
     settings.num_requests = num_requests
     settings.num_clients = num_clients
     settings.hatch_rate = hatch_rate
+    settings.reset_stats = reset_stats
 
     # Default settings that are not to be changed
     settings.no_web = True
@@ -52,7 +54,8 @@ def create_settings(from_environment=False, locustfile=None,
         for attribute in ['locustfile', 'classes', 'host', 'num_requests', 'num_clients', 'hatch_rate']:
             var_name = 'LOCUST_{0}'.format(attribute.upper())
             var_value = os.environ.get(var_name)
-            setattr(settings, attribute, var_value)
+            if var_value:
+                setattr(settings, attribute, var_value)
 
     if settings.locustfile is None and settings.classes is None:
         raise Exception('One of locustfile or classes must be specified')
