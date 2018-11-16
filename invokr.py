@@ -14,7 +14,6 @@ def parse_arguments():
     p.add_argument('-n', '--function_name', help='Lambda function name', required=True)
     p.add_argument('-f', '--locust_file', help='Locust file', required=True)
     p.add_argument('-o', '--locust_host', help='Locust host', required=True)
-    p.add_argument('-e', '--locust_requests', help='Locust requests amount', default=1000, type=int)
     p.add_argument('-c', '--locust_clients', help='Locust clients', default=20, type=int)
     p.add_argument('-r', '--ramp_time', help='Ramp up time (seconds)', default=0, type=int)
     p.add_argument('-t', '--threads', help='Threads to run in parallel', default=1, type=int)
