@@ -73,7 +73,7 @@ def create_settings(from_environment=False, locustfile=None,
                 # This needs fixing
                 settings.classes[idx] = eval(val)
 
-    for attribute in ['classes', 'host', 'num_requests', 'num_clients', 'hatch_rate']:
+    for attribute in ['classes', 'host', 'num_clients', 'hatch_rate']:
         val = getattr(settings, attribute, None)
         if not val:
             raise Exception('configuration error, attribute not set: {0}'.format(attribute))

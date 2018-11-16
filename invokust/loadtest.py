@@ -7,6 +7,7 @@ import signal
 import logging
 import time
 from locust import runners, events
+from locust.util.time import parse_timespan
 
 import gevent
 
@@ -75,6 +76,11 @@ class LocustLoadTest(object):
         of the load test
         '''
         if timeout:
+            try:
+                timeout = parse_timespan(timeout)
+            except ValueError:
+                logger.error("Valid --run-time formats are: 20, 20s, 3m, 2h, 1h20m, 3h30m10s, etc.")
+                sys.exit(1)
             self.timeout = timeout
             logger.info("Run time limit set to %s seconds" % timeout)
             def timelimit_stop():

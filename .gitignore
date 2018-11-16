@@ -2,6 +2,7 @@
 __pycache__
 *.zip
 python-packages
+.python-version
 .terraform
 terraform.tfstate*
 invokust.egg-info
