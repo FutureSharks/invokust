@@ -81,11 +81,4 @@ def create_settings(from_environment=False, locustfile=None,
         if isinstance(val, str) and val.isdigit():
             setattr(settings, attribute, int(val))
     
-    try:
-        parsed_run_time = parse_timespan(run_time)
-    except ValueError:
-        parsed_run_time = 180000
-    
-    settings.run_time = parsed_run_time if parsed_run_time < 180000 else 180000
-
     return settings
