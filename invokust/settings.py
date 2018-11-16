@@ -3,11 +3,11 @@
 import os
 
 from locust.main import load_locustfile
-
+from locust.util.time import parse_timespan
 
 def create_settings(from_environment=False, locustfile=None,
         classes=None, host=None, num_requests=None, num_clients=None,
-        hatch_rate=None, reset_stats=False):
+        hatch_rate=None, reset_stats=False, run_time="3m"):
     '''
     Returns a settings object to be used by a LocalLocustRunner.
 
@@ -21,6 +21,7 @@ def create_settings(from_environment=False, locustfile=None,
         num_clients: number of clients to simulate in load test
         hatch_rate: number of clients per second to start
         reset_stats: Whether to reset stats after all clients are hatched
+        run_time: The length of time to run the test for. Cannot exceed the duration limit set by lambda
 
     If from_environment is set to True then this function will attempt to set
     the attributes from environment variables. The environment variables are
@@ -28,6 +29,13 @@ def create_settings(from_environment=False, locustfile=None,
     '''
 
     settings = type('', (), {})()
+
+    try:
+        parsed_run_time = parse_timespan(run_time)
+    except ValueError:
+        logger.error("Valid run_time formats are: 20, 20s, 3m, 2h, 1h20m, 3h30m10s, etc.")
+        logger.info("Setting run_time to default")
+        parsed_run_time = 180000
 
     settings.from_environment = from_environment
     settings.locustfile = locustfile
@@ -37,6 +45,7 @@ def create_settings(from_environment=False, locustfile=None,
     settings.num_clients = num_clients
     settings.hatch_rate = hatch_rate
     settings.reset_stats = reset_stats
+    settings.run_time = parsed_run_time if parsed_run_time < 180000 else 180000
 
     # Default settings that are not to be changed
     settings.no_web = True

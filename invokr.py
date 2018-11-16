@@ -18,7 +18,7 @@ def parse_arguments():
     p.add_argument('-c', '--locust_clients', help='Locust clients', default=20, type=int)
     p.add_argument('-r', '--ramp_time', help='Ramp up time (seconds)', default=0, type=int)
     p.add_argument('-t', '--threads', help='Threads to run in parallel', default=1, type=int)
-    p.add_argument('-l', '--time_limit', help='Time limit for run time (seconds)', default=0, type=int)
+    p.add_argument('-l', '--time_limit', help='Time limit for run time (seconds)', type=int)
     return p.parse_args()
 
 def print_stats_exit(load_test_state):
@@ -54,12 +54,19 @@ if __name__ == '__main__':
 
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)-6s %(threadName)-11s %(message)s')
 
+    '''
+    We set the lambda_runtime param to be either the length of the test or to 3 minutes of the 
+    test will alst longer. This is because otherwise the lambdas will keep runnning until they
+    error for exceeding invocation time.
+    '''
+    lambda_runtime = f'{args.time_limit}s' if args.time_limit < 180 else "3m"
     lambda_payload = {
         'locustfile': args.locust_file,
         'host': args.locust_host,
         'num_requests': args.locust_requests,
         'num_clients': args.locust_clients,
-        'hatch_rate': 10
+        'hatch_rate': 10,
+        'run_time': lambda_runtime
     }
 
     load_test_state = LambdaLoadTest(
