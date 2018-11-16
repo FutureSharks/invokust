@@ -63,7 +63,6 @@ if __name__ == '__main__':
     lambda_payload = {
         'locustfile': args.locust_file,
         'host': args.locust_host,
-        'num_requests': args.locust_requests,
         'num_clients': args.locust_clients,
         'hatch_rate': 10,
         'run_time': lambda_runtime

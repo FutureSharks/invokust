@@ -20,7 +20,6 @@ import invokust
 settings = invokust.create_settings(
     locustfile='locustfile_example.py',
     host='http://example.com',
-    num_requests=10,
     num_clients=1,
     hatch_rate=1
     )
@@ -52,7 +51,6 @@ class WebsiteUser(HttpLocust):
 settings = invokust.create_settings(
     classes=[WebsiteUser],
     host='http://example.com',
-    num_requests=10,
     num_clients=1,
     hatch_rate=1
     )
@@ -115,9 +113,9 @@ The Locust settings can be passed to the Lambda function or can be set from envi
   - LOCUST_LOCUSTFILE: Locust file to use for the load test
   - LOCUST_CLASSES: Names of locust classes to use for the load test (instead of a locustfile). If more than one, separate with comma.
   - LOCUST_HOST: The host to run the load test against
-  - LOCUST_NUM_REQUESTS: Total number of requests to make
   - LOCUST_NUM_CLIENTS: Number of clients to simulate
   - LOCUST_HATCH_RATE: Number of clients per second to start
+  - LOCUST_RUN_TIME: The time the test should run for. 
 
 [AWS CLI](https://aws.amazon.com/cli/) example with Locust settings in a payload:
 
@@ -144,7 +142,6 @@ client = session.client('lambda', config=config)
 lambda_payload = {
     'locustfile': 'locustfile_example.py',
     'host': 'https://example.com',
-    'num_requests': '20',
     'num_clients': '1',
     'hatch_rate': 1
 }
@@ -167,7 +164,6 @@ logging.basicConfig(level=logging.INFO)
 lambda_payload = {
     'locustfile': 'locustfile_example.py',
     'host': 'https://example.com',
-    'num_requests': '20',
     'num_clients': '1',
     'hatch_rate': 1
 }
@@ -186,7 +182,7 @@ Starting load test
 Function: lambda_locust
 Ramp time: 0
 Threads: 2
-Lambda payload: {'locustfile': 'locustfile_example.py', 'host': 'https://example.com', 'num_requests': '20', 'num_clients': '1', 'hatch_rate': 1}
+Lambda payload: {'locustfile': 'locustfile_example.py', 'host': 'https://example.com', 'run_time': '30s', 'num_clients': '1', 'hatch_rate': 1}
 
 INFO:root:thread started
 INFO:root:threads: 1, rpm: 0, run_time: 0, requests_total: 0, request_fail_ratio: 0, invocation_error_ratio: 0

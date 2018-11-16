@@ -100,7 +100,7 @@ class LocustLoadTest(object):
             runners.locust_runner.greenlet.join()
             self.end_time = time.time()
             logger.info('Locust completed {0} requests with {1} errors'.format(
-                self.settings.num_requests,
+                runners.locust_runner.stats.num_requests,
                 len(runners.locust_runner.errors)))
 
         except Exception as e:
