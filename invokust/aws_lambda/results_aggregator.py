@@ -24,7 +24,7 @@ def results_aggregator(results):
         flat_list = []
         for r_time in response_times:
             for key, value in r_time.items():
-                flat_list.extend([int(key)] * value)
+                flat_list.extend([int(float(key))] * value)
         hist, bins = histogram(flat_list)
         return {
             'histogram': hist.tolist(),
