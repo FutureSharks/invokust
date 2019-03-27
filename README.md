@@ -21,7 +21,8 @@ settings = invokust.create_settings(
     locustfile='locustfile_example.py',
     host='http://example.com',
     num_clients=1,
-    hatch_rate=1
+    hatch_rate=1,
+    run_time='3m'
     )
 
 loadtest = invokust.LocustLoadTest(settings)
@@ -52,7 +53,8 @@ settings = invokust.create_settings(
     classes=[WebsiteUser],
     host='http://example.com',
     num_clients=1,
-    hatch_rate=1
+    hatch_rate=1,
+    run_time='3m'
     )
 
 loadtest = invokust.LocustLoadTest(settings)
@@ -115,12 +117,12 @@ The Locust settings can be passed to the Lambda function or can be set from envi
   - LOCUST_HOST: The host to run the load test against
   - LOCUST_NUM_CLIENTS: Number of clients to simulate
   - LOCUST_HATCH_RATE: Number of clients per second to start
-  - LOCUST_RUN_TIME: The time the test should run for. 
+  - LOCUST_RUN_TIME: The time the test should run for.
 
 [AWS CLI](https://aws.amazon.com/cli/) example with Locust settings in a payload:
 
 ```
-aws lambda invoke --function-name lambda_locust --invocation-type RequestResponse --payload '{"locustfile": "locustfile_example.py", "host":"https://example.com", "num_requests":"20", "num_clients": "1", "hatch_rate": "1"}' output.txt
+aws lambda invoke --function-name lambda_locust --invocation-type RequestResponse --payload '{"locustfile": "locustfile_example.py", "host":"https://example.com", "num_requests":"20", "num_clients": "1", "hatch_rate": "1", "run_time":"3m"}' output.txt
 {
     "StatusCode": 200
 }
@@ -143,7 +145,8 @@ lambda_payload = {
     'locustfile': 'locustfile_example.py',
     'host': 'https://example.com',
     'num_clients': '1',
-    'hatch_rate': 1
+    'hatch_rate': 1,
+    'run_time':'3m'
 }
 
 response = client.invoke(FunctionName='lambda_locust', Payload=json.dumps(lambda_payload))
@@ -165,7 +168,8 @@ lambda_payload = {
     'locustfile': 'locustfile_example.py',
     'host': 'https://example.com',
     'num_clients': '1',
-    'hatch_rate': 1
+    'hatch_rate': 1,
+    'run_time':'3m'
 }
 
 load_test = LambdaLoadTest(
@@ -182,7 +186,7 @@ Starting load test
 Function: lambda_locust
 Ramp time: 0
 Threads: 2
-Lambda payload: {'locustfile': 'locustfile_example.py', 'host': 'https://example.com', 'run_time': '30s', 'num_clients': '1', 'hatch_rate': 1}
+Lambda payload: {'locustfile': 'locustfile_example.py', 'host': 'https://example.com', 'run_time': '30s', 'num_clients': '1', 'hatch_rate': 1, 'run_time':'3m'}
 
 INFO:root:thread started
 INFO:root:threads: 1, rpm: 0, run_time: 0, requests_total: 0, request_fail_ratio: 0, invocation_error_ratio: 0
@@ -237,7 +241,7 @@ Starting load test
 Function: lambda_locust
 Ramp time: 0
 Threads: 1
-Lambda payload: {'locustfile': 'locustfile_example.py', 'host': 'https://example.com', 'num_requests': 20, 'num_clients': 20, 'hatch_rate': 10}
+Lambda payload: {'locustfile': 'locustfile_example.py', 'host': 'https://example.com', 'num_requests': 20, 'num_clients': 20, 'hatch_rate': 10, 'run_time':'3m'}
 
 2017-05-22 20:16:22,432 INFO   thread_1    thread started
 2017-05-22 20:16:22,436 INFO   MainThread  threads: 1, rpm: 0, run_time: 0, requests_total: 0, request_fail_ratio: 0, invocation_error_ratio: 0

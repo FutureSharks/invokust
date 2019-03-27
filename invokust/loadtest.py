@@ -9,14 +9,14 @@ import time
 from locust import runners, events
 from locust.util.time import parse_timespan
 
-import gevent
-
 logger = logging.getLogger(__name__)
+
 
 class LocustLoadTest(object):
     '''
     Runs a Locust load test and returns statistics
     '''
+
     def __init__(self, settings):
         self.settings = settings
         self.start_time = None
@@ -60,7 +60,8 @@ class LocustLoadTest(object):
 
         for id, error in runners.locust_runner.errors.items():
             error_dict = error.to_dict()
-            locust_task_name = '{0}_{1}'.format(error_dict['method'], error_dict['name'])
+            locust_task_name = '{0}_{1}'.format(error_dict['method'],
+                                                error_dict['name'])
             statistics['failures'][locust_task_name] = error_dict
 
         return statistics
@@ -70,31 +71,33 @@ class LocustLoadTest(object):
         logger.info(json.dumps(self.stats()))
         sys.exit(0)
 
-    def run(self, timeout=None):
+    def run(self):
         '''
-        Run the load test. Optionally a timeout can be set to limit the run time
-        of the load test
+        Run the load test.
         '''
-        if timeout:
+        if self.settings.run_time:
             try:
-                timeout = parse_timespan(timeout)
+                self.settings.run_time = parse_timespan(self.settings.run_time)
             except ValueError:
-                logger.error("Valid --run-time formats are: 20, 20s, 3m, 2h, 1h20m, 3h30m10s, etc.")
+                logger.error("Valid --run-time formats are:")
+                logger.error("20, 20s, 3m, 2h, 1h20m, 3h30m10s, etc.")
                 sys.exit(1)
-            self.timeout = timeout
-            logger.info("Run time limit set to %s seconds" % timeout)
+            self.run_time = self.settings.run_time
+            logger.info("Run time limit set to %s seconds" % self.run_time)
+
             def timelimit_stop():
                 logger.info("Time limit reached. Stopping Locust.")
                 logger.info(json.dumps(self.stats()))
-                logger.info("Run time limit reached: {0} seconds".format(self.timeout))
+                logger.info("Run time limit reached: {0} seconds".format(
+                    self.run_time))
                 runners.locust_runner.quit()
-            gevent.spawn_later(timeout, timelimit_stop)
+
+            gevent.spawn_later(self.run_time, timelimit_stop)
         try:
             logger.info("Starting Locust with settings {0}".format(
-                vars(self.settings)
-            ))
-            runners.locust_runner = runners.LocalLocustRunner(self.settings.classes,
-                self.settings)
+                vars(self.settings)))
+            runners.locust_runner = runners.LocalLocustRunner(
+                self.settings.classes, self.settings)
             runners.locust_runner.start_hatching(wait=True)
             self.start_time = time.time()
             runners.locust_runner.greenlet.join()
