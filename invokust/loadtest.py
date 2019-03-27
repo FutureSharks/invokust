@@ -7,13 +7,11 @@ import signal
 import logging
 import time
 from locust import runners, events
+from locust.util.time import parse_timespan
 
+import gevent
 
 logger = logging.getLogger(__name__)
-
-
-class TimeOutException(Exception): pass
-
 
 class LocustLoadTest(object):
     '''
@@ -23,7 +21,6 @@ class LocustLoadTest(object):
         self.settings = settings
         self.start_time = None
         self.end_time = None
-        signal.signal(signal.SIGALRM, self.sig_alarm_handler)
         gevent.signal(signal.SIGTERM, self.sig_term_handler)
 
     def stats(self):
@@ -73,23 +70,29 @@ class LocustLoadTest(object):
         logger.info(json.dumps(self.stats()))
         sys.exit(0)
 
-    def sig_alarm_handler(self, signum, frame):
-        '''
-        This handler is used when a run time limit is set
-        '''
-        raise TimeOutException
-
     def run(self, timeout=None):
         '''
         Run the load test. Optionally a timeout can be set to limit the run time
         of the load test
         '''
         if timeout:
+            try:
+                timeout = parse_timespan(timeout)
+            except ValueError:
+                logger.error("Valid --run-time formats are: 20, 20s, 3m, 2h, 1h20m, 3h30m10s, etc.")
+                sys.exit(1)
             self.timeout = timeout
-            signal.alarm(timeout)
+            logger.info("Run time limit set to %s seconds" % timeout)
+            def timelimit_stop():
+                logger.info("Time limit reached. Stopping Locust.")
+                logger.info(json.dumps(self.stats()))
+                logger.info("Run time limit reached: {0} seconds".format(self.timeout))
+                runners.locust_runner.quit()
+            gevent.spawn_later(timeout, timelimit_stop)
         try:
-            logger.info("Starting Locust with and settings {0}".format(
-                vars(self.settings)))
+            logger.info("Starting Locust with settings {0}".format(
+                vars(self.settings)
+            ))
             runners.locust_runner = runners.LocalLocustRunner(self.settings.classes,
                 self.settings)
             runners.locust_runner.start_hatching(wait=True)
@@ -97,12 +100,8 @@ class LocustLoadTest(object):
             runners.locust_runner.greenlet.join()
             self.end_time = time.time()
             logger.info('Locust completed {0} requests with {1} errors'.format(
-                self.settings.num_requests,
+                runners.locust_runner.stats.num_requests,
                 len(runners.locust_runner.errors)))
-
-        except TimeOutException:
-            logger.info(json.dumps(self.stats()))
-            logger.info("Run time limit reached: {0} seconds".format(self.timeout))
 
         except Exception as e:
             logger.error("Locust exception {0}".format(repr(e)))

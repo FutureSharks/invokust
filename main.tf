@@ -55,7 +55,7 @@ resource "aws_lambda_function" "lambda_locust" {
   description   = "A function that runs a locust load test"
   environment {
     variables = {
-      LOCUST_NUM_REQUESTS="10"
+      LOCUST_RUN_TIME = "3m"
       LOCUST_LOCUSTFILE="locustfile_example.py"
       LOCUST_HOST="http://example.com"
       LOCUST_HATCH_RATE="1"
