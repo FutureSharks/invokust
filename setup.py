@@ -13,7 +13,7 @@ setup(
     long_description_content_type="text/markdown",
     url = 'https://github.com/FutureSharks/invokust',
     download_url  =  'https://github.com/FutureSharks/invokust/archive/0.41.tar.gz',
-    license = 'GPLv2',
+    license = 'MIT',
     scripts = ['invokr.py'],
     packages = [
         'invokust',
