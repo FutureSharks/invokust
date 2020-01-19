@@ -3,7 +3,6 @@
 import os
 
 from locust.main import load_locustfile
-from locust.util.time import parse_timespan
 
 def create_settings(from_environment=False, locustfile=None,
         classes=None, host=None, num_clients=None,
@@ -49,6 +48,8 @@ def create_settings(from_environment=False, locustfile=None,
     settings.logfile = None
     settings.show_task_ratio = False
     settings.print_stats = False
+    settings.step_load = False
+    settings.stop_timeout = None
 
     if from_environment:
         for attribute in ['locustfile', 'classes', 'host', 'run_time', 'num_clients', 'hatch_rate']:
