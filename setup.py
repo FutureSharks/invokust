@@ -12,7 +12,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url = 'https://github.com/FutureSharks/invokust',
-    download_url  =  'https://github.com/FutureSharks/invokust/archive/0.41.tar.gz',
+    download_url  =  'https://github.com/FutureSharks/invokust/archive/0.6.tar.gz',
     license = 'MIT',
     scripts = ['invokr.py'],
     packages = [
