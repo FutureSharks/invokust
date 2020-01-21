@@ -7,7 +7,7 @@ import signal
 import logging
 import time
 from locust import runners, events
-from locust.util.time import parse_timespan
+from locust.util.timespan import parse_timespan
 
 logger = logging.getLogger(__name__)
 
