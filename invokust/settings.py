@@ -6,7 +6,7 @@ from locust.main import load_locustfile
 
 def create_settings(from_environment=False, locustfile=None,
         classes=None, host=None, num_clients=None,
-        hatch_rate=None, reset_stats=False, run_time="3m"):
+        hatch_rate=None, reset_stats=False, run_time="3m", loglevel='INFO'):
     '''
     Returns a settings object to be used by a LocalLocustRunner.
 
@@ -36,13 +36,13 @@ def create_settings(from_environment=False, locustfile=None,
     settings.hatch_rate = hatch_rate
     settings.reset_stats = reset_stats
     settings.run_time = run_time
+    settings.loglevel = loglevel
 
     # Default settings that are not to be changed
     settings.no_web = True
     settings.master = False
     settings.show_task_ratio_json = False
     settings.list_commands = False
-    settings.loglevel = 'INFO'
     settings.slave = False
     settings.only_summary = True
     settings.logfile = None
@@ -52,7 +52,7 @@ def create_settings(from_environment=False, locustfile=None,
     settings.stop_timeout = None
 
     if from_environment:
-        for attribute in ['locustfile', 'classes', 'host', 'run_time', 'num_clients', 'hatch_rate']:
+        for attribute in ['locustfile', 'classes', 'host', 'run_time', 'num_clients', 'hatch_rate', 'loglevel']:
             var_name = 'LOCUST_{0}'.format(attribute.upper())
             var_value = os.environ.get(var_name)
             if var_value:
@@ -81,5 +81,5 @@ def create_settings(from_environment=False, locustfile=None,
 
         if isinstance(val, str) and val.isdigit():
             setattr(settings, attribute, int(val))
-    
+
     return settings

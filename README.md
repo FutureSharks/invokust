@@ -117,7 +117,8 @@ The Locust settings can be passed to the Lambda function or can be set from envi
   - LOCUST_HOST: The host to run the load test against
   - LOCUST_NUM_CLIENTS: Number of clients to simulate
   - LOCUST_HATCH_RATE: Number of clients per second to start
-  - LOCUST_RUN_TIME: The time the test should run for.
+  - LOCUST_RUN_TIME: The time the test should run for
+  - LOCUST_LOGLEVEL: Level of logging
 
 [AWS CLI](https://aws.amazon.com/cli/) example with Locust settings in a payload:
 

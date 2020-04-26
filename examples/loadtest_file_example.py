@@ -10,7 +10,8 @@ settings = invokust.create_settings(
     host='http://example.com',
     num_clients=1,
     hatch_rate=1,
-    run_time='10s'
+    run_time='10s',
+    loglevel='DEBUG'
 )
 
 loadtest = invokust.LocustLoadTest(settings)
