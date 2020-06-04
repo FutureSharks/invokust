@@ -82,6 +82,6 @@ def results_aggregator(results):
     for task in failed_tasks:
         task_data_results = [stat['failures'][task] for stat in results if task in stat['failures']]
         agg_results['failures'][task] = task_data_results[0]
-        agg_results['failures'][task]['occurences'] = sum([stat['occurences'] for stat in task_data_results])
+        agg_results['failures'][task]['occurrences'] = sum([stat['occurrences'] for stat in task_data_results])
 
     return agg_results
