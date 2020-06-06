@@ -27,13 +27,15 @@ class LambdaLoadTest(object):
         self.logger = logging.getLogger()
         self.threads = threads
         self.ramp_time = ramp_time
-        self.time_limit = time_limit
+        self.time_limit = time_limit  # don't start new threads after {time_limit} seconds
         self.lambda_function_name = lambda_function_name
         self.lambda_payload = lambda_payload
         self.lambda_invocation_errors = 0
         self.lambda_invocation_count = 0
+        self.lambda_invocation_error_threshold = 20
         self.lambda_total_execution_time = 0
         self.requests_fail = 0
+        self.request_fail_ratio_threshold = 0.5
         self.requests_total = 0
         self.locust_results = []
         self.thread_data = {}
@@ -55,27 +57,27 @@ class LambdaLoadTest(object):
         '''
         return len([t for t in threading.enumerate() if t.getName() is not 'MainThread'])
 
-    def get_run_time(self):
+    def get_time_elapsed(self):
         '''
-        Returns total run time of the load test
+        Returns elapsed time in seconds since starting the load test
         '''
         return round(time.time() - self.start_time)
 
-    def log_lambda_invocation_error(self):
+    def increase_lambda_invocation_error(self):
         '''
         Increases Lambda invocation error count
         '''
         with self.lock:
             self.lambda_invocation_errors += 1
 
-    def log_lambda_invocation_count(self):
+    def increase_lambda_invocation_count(self):
         '''
         Increases Lambda invocation count
         '''
         with self.lock:
             self.lambda_invocation_count += 1
 
-    def invocation_error_ratio(self):
+    def get_invocation_error_ratio(self):
         '''
         Returns ratio of Lambda invocations to invocation errors
         '''
@@ -84,21 +86,21 @@ class LambdaLoadTest(object):
         except ZeroDivisionError:
             return 0
 
-    def log_requests_total(self, requests):
+    def increase_requests_total(self, requests):
         '''
         Increases total request count
         '''
         with self.lock:
             self.requests_total += requests
 
-    def log_requests_fail(self, requests):
+    def increase_requests_fail(self, requests):
         '''
         Increases total request fail count
         '''
         with self.lock:
             self.requests_fail += requests
 
-    def request_fail_ratio(self):
+    def get_request_fail_ratio(self):
         '''
         Returns ratio of failed to total requests
         '''
@@ -107,9 +109,9 @@ class LambdaLoadTest(object):
         except ZeroDivisionError:
             return 0
 
-    def log_locust_results(self, results):
+    def append_locust_results(self, results):
         '''
-        Logs results from a locust exection. All results needs to be aggregated in order to show meaningful statistics of the whole load test
+        Logs results from a locust execution. All results needs to be aggregated in order to show meaningful statistics of the whole load test
         '''
         with self.lock:
             self.locust_results.append(results)
@@ -122,8 +124,8 @@ class LambdaLoadTest(object):
             'lambda_invocation_count': self.lambda_invocation_count,
             'total_lambda_execution_time': self.lambda_total_execution_time,
             'requests_total': self.requests_total,
-            'request_fail_ratio': self.request_fail_ratio(),
-            'invocation_error_ratio': self.invocation_error_ratio()
+            'request_fail_ratio': self.get_request_fail_ratio(),
+            'invocation_error_ratio': self.get_invocation_error_ratio()
         }
 
     def get_stats(self):
@@ -133,10 +135,10 @@ class LambdaLoadTest(object):
         return {
             'thread_count': self.get_thread_count(),
             'rpm': self.calculate_rpm(),
-            'run_time': self.get_run_time(),
+            'time_elapsed': self.get_time_elapsed(),
             'requests_total': self.requests_total,
-            'request_fail_ratio': self.request_fail_ratio(),
-            'invocation_error_ratio': self.invocation_error_ratio(),
+            'request_fail_ratio': self.get_request_fail_ratio(),
+            'invocation_error_ratio': self.get_invocation_error_ratio(),
         }
 
     def get_locust_results(self):
@@ -145,16 +147,16 @@ class LambdaLoadTest(object):
         '''
         return self.locust_results
 
-    def log_lambda_execution_time(self, time):
+    def increase_lambda_execution_time(self, time):
         '''
-        Add Lambda exection time to the total
+        Add Lambda execution time to the total
         '''
         with self.lock:
             self.lambda_total_execution_time += time
 
     def calculate_rpm(self):
         '''
-        Returns current total RPM across all threads
+        Returns current total request per minute across all threads
         '''
         return round(sum(self.thread_data[thread_id]['rpm'] for thread_id in self.thread_data if 'rpm' in self.thread_data[thread_id]))
 
@@ -162,7 +164,19 @@ class LambdaLoadTest(object):
         '''
         Checks if the current Lambda and request fail ratios are within thresholds
         '''
-        if self.lambda_invocation_errors > 20 or self.request_fail_ratio() > 0.5:
+
+
+        if self.lambda_invocation_errors > self.lambda_invocation_error_threshold:
+            self.logger.error(
+                f"Error limit reached. invocation error count/threshold: "
+                f"{self.lambda_invocation_errors}/{self.lambda_invocation_error_threshold}"
+            )
+            return True
+        elif self.get_request_fail_ratio() > self.request_fail_ratio_threshold:
+            self.logger.error(
+                f"Error limit reached. requests failed ratio/threshold: "
+                f"{self.get_request_fail_ratio()}/{self.request_fail_ratio_threshold}"
+            )
             return True
         else:
             return False
@@ -174,7 +188,7 @@ class LambdaLoadTest(object):
         result = False
         if self.get_thread_count() < self.threads:
             next_thread_interval = (self.ramp_time / self.threads) * self.get_thread_count()
-            if self.get_run_time() > next_thread_interval:
+            if self.get_time_elapsed() > next_thread_interval:
                 result = True
         return result
 
@@ -216,6 +230,7 @@ class LambdaLoadTest(object):
             function_start_time = time.time()
 
             try:
+                self.logger.info("Invoking lambda...")
                 response = client.invoke(FunctionName=self.lambda_function_name, Payload=json.dumps(self.lambda_payload))
             except Exception as e:
                 self.logger.critical('Lambda invocation failed: {0}'.format(repr(e)))
@@ -224,11 +239,11 @@ class LambdaLoadTest(object):
 
             function_end_time = time.time()
 
-            self.log_lambda_invocation_count()
+            self.increase_lambda_invocation_count()
 
             if 'FunctionError' in response:
                 logger.error('error {0}: {1}'.format(response['FunctionError'], response['Payload'].read()))
-                self.log_lambda_invocation_error()
+                self.increase_lambda_invocation_error()
                 time.sleep(2)
                 continue
 
@@ -237,7 +252,7 @@ class LambdaLoadTest(object):
 
             if not payload_json_str:
                 logger.error('No results in payload')
-                self.log_lambda_invocation_error()
+                self.increase_lambda_invocation_error()
                 time.sleep(2)
                 continue
 
@@ -246,21 +261,20 @@ class LambdaLoadTest(object):
             total_rpm = results['num_requests'] / (function_duration / 60)
             lambda_execution_time = 300000 - results['remaining_time']
 
-            self.log_locust_results(results)
-            self.log_requests_fail(results['num_requests_fail'])
-            self.log_requests_total(results['num_requests'])
+            self.append_locust_results(results)
+            self.increase_requests_fail(results['num_requests_fail'])
+            self.increase_requests_total(results['num_requests'])
             self.update_thread_data(thread_id, 'rpm', total_rpm)
             self.update_thread_data(thread_id, 'lambda_execution_time', lambda_execution_time)
-            self.log_lambda_execution_time(lambda_execution_time)
+            self.increase_lambda_execution_time(lambda_execution_time)
 
-            logger.info('Invocation complete. Requests (errors): {0} ({1}), execution time: {2}, sleeping: {3}'.format(
+            logger.info('Lambda invocation complete. Requests (errors): {0} ({1}), execution time: {2}ms, sleeping: {3}s'.format(
                     results['num_requests'],
                     results['num_requests_fail'],
                     lambda_execution_time,
                     sleep_time
                 )
             )
-
             time.sleep(sleep_time)
 
         self.logger.info('thread finished')
@@ -269,30 +283,27 @@ class LambdaLoadTest(object):
         '''
         Starts the load test, periodically prints statistics and starts new threads
         '''
-        self.logger.info('\nStarting load test\nFunction: {0}\nRamp time: {1}\nThreads: {2}\nLambda payload: {3}\n'.format(
-                self.lambda_function_name,
-                self.ramp_time,
-                self.threads,
-                self.lambda_payload
-            )
+        self.logger.info(
+            "\nStarting load test..."
+            f"\nFunction name: {self.lambda_function_name}"
+            f"\nRamp time: {self.ramp_time}s"
+            f"\nThreads: {self.threads}"
+            f"\nLambda payload: {self.lambda_payload}"
+            f"\nStart ramping down after: {self.time_limit}s"
         )
 
         self.start_new_thread()
 
         while True:
             self.logger.info(
-                'threads: {thread_count}, rpm: {rpm}, run_time: {run_time}, requests_total: {requests_total}, request_fail_ratio: {request_fail_ratio}, invocation_error_ratio: {invocation_error_ratio}'.format(**self.get_stats())
+                'threads: {thread_count}, rpm: {rpm}, time elapsed: {time_elapsed}s, total requests from finished threads: {requests_total}, '
+                'request fail ratio: {request_fail_ratio}, invocation error ratio: {invocation_error_ratio}'.format(**self.get_stats())
             )
 
             if self.thread_required():
                 self.start_new_thread()
 
             if self.check_error_threshold():
-                self.logger.error('Error limit reached, invocation error ratio: {0}, request fail ratio: {1}'.format(
-                        self.invocation_error_ratio(),
-                        self.request_fail_ratio()
-                    )
-                )
                 self.stop_threads()
                 self.logger.info('Waiting for threads to exit...')
                 while self.get_thread_count() > 0:
@@ -301,9 +312,11 @@ class LambdaLoadTest(object):
                     break
 
 
-            if self.time_limit and self.get_run_time() > self.time_limit:
-                self.logger.info('Time limit reached')
+            if self.time_limit and self.get_time_elapsed() > self.time_limit:
+                self.logger.info('Time limit reached. Starting ramp down...')
                 self.stop_threads()
+
+                self.logger.info("Waiting for all Lambdas to return. This may take up to {0}.".format(self.lambda_payload["run_time"]))
                 while self.get_thread_count() > 0:
                     time.sleep(1)
                 else:

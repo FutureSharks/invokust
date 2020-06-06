@@ -31,6 +31,19 @@ def print_stats_exit(load_test_state):
     agg_results['ramp_time'] = load_test_state.ramp_time
     agg_results['time_limit'] = load_test_state.time_limit
     logging.info('Aggregated results: {0}'.format(json.dumps(agg_results)))
+
+    logging.info("\n============================================================"
+                 f"\nRamp up time: {agg_results['ramp_time']}s"
+                 f"\nStarted ramp down after {agg_results['time_limit']}s (time_limit)"
+                 f"\nThread count: {agg_results['threads']}"
+                 f"\nLambda invocation count: {agg_results['lambda_invocations']}"
+                 f"\nLambda invocation error ratio: {agg_results['invocation_error_ratio']}"
+                 f"\nCumulative lambda execution time: {agg_results['total_lambda_execution_time']}ms"
+                 f"\nTotal requests sent: {agg_results['num_requests']}"
+                 f"\nTotal requests failed: {agg_results['num_requests_fail']}"
+                 f"\nTotal request failure ratio: {agg_results['request_fail_ratio']}\n"
+
+    )
     logging.info('===========================================================================================================================')
     logging.info(print_stat('TYPE', 'NAME', '#REQUESTS', 'MEDIAN', 'AVERAGE', 'MIN', 'MAX', '#REQS/SEC'))
     logging.info('===========================================================================================================================')
@@ -53,18 +66,16 @@ if __name__ == '__main__':
 
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)-6s %(threadName)-11s %(message)s')
 
-    '''
-    We set the lambda_runtime param to be either the length of the test or to 3 minutes of the 
-    test will alst longer. This is because otherwise the lambdas will keep runnning until they
-    error for exceeding invocation time.
-    '''
-    lambda_runtime = f'{args.time_limit}s' if args.time_limit < 180 else "3m"
+    # AWS Lambda has a maximum execution time ("timeout"). We limit the execution time to 3 minutes if the overall
+    # load test time is longer, to make sure the lambda will not exceed the timeout.
+
+    lambda_runtime = f'{min(args.time_limit, 180)}s'
     lambda_payload = {
         'locustfile': args.locust_file,
         'host': args.locust_host,
         'num_clients': args.locust_clients,
         'hatch_rate': 10,
-        'run_time': lambda_runtime
+        'run_time': lambda_runtime,
     }
 
     load_test_state = LambdaLoadTest(
@@ -72,7 +83,7 @@ if __name__ == '__main__':
         args.threads,
         args.ramp_time,
         args.time_limit,
-        lambda_payload
+        lambda_payload,
     )
 
     try:
