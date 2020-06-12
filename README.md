@@ -36,9 +36,11 @@ Running a load test without locust file:
 ```python
 import invokust
 
-from locust import HttpLocust, TaskSet, task
+from locust import HttpUser, between, task
 
-class Task(TaskSet):
+class WebsiteUser(HttpUser):
+    wait_time = between(1, 3)
+    
     @task()
     def get_home_page(self):
         '''
@@ -46,16 +48,13 @@ class Task(TaskSet):
         '''
         self.client.get("/")
 
-class WebsiteUser(HttpLocust):
-    task_set = Task
-
 settings = invokust.create_settings(
     classes=[WebsiteUser],
     host='http://example.com',
-    num_clients=1,
+    num_users=1,
     hatch_rate=1,
     run_time='3m'
-    )
+)
 
 loadtest = invokust.LocustLoadTest(settings)
 loadtest.run()
@@ -222,53 +221,33 @@ INFO:root:thread finished
 There is also an example CLI tool for running a load test, `invokr.py`:
 
 ```
-$ .invokr.py --function_name=lambda_locust --locust_file=locustfile_example.py --locust_host=https://example.com --threads=1 --time_limit=30 --locust_clients=20
-2020-06-06 19:41:01,476 INFO   MainThread
-Starting load test...
-Function name: lambda_locust
-Ramp time: 0s
+$ ./invokr.py --function_name=lambda_locust --locust_file=locustfile_example.py --locust_host=https://example.com --threads=1 --time_limit=15 --locust_users=2
+2017-05-22 20:16:22,432 INFO   MainThread
+Starting load test
+Function: lambda_locust
+Ramp time: 0
 Threads: 1
-Lambda payload: {'locustfile': 'locustfile_example.py', 'host': 'https://example.com', 'num_clients': 20, 'hatch_rate': 10, 'run_time': '10s'}
-Start ramping down after: 30s
-2020-06-06 19:41:01,476 INFO   thread_1    thread started
-2020-06-06 19:41:01,476 INFO   thread_1    Invoking lambda...
-2020-06-06 19:41:01,482 INFO   MainThread  threads: 1, rpm: 0, time elapsed: 0s, total requests from finished threads: 0, request fail ratio: 0, invocation error ratio: 0
-2020-06-06 19:41:04,488 INFO   MainThread  threads: 1, rpm: 0, time elapsed: 3s, total requests from finished threads: 0, request fail ratio: 0, invocation error ratio: 0
-2020-06-06 19:41:07,490 INFO   MainThread  threads: 1, rpm: 0, time elapsed: 6s, total requests from finished threads: 0, request fail ratio: 0, invocation error ratio: 0
-2020-06-06 19:41:10,491 INFO   MainThread  threads: 1, rpm: 0, time elapsed: 9s, total requests from finished threads: 0, request fail ratio: 0, invocation error ratio: 0
-2020-06-06 19:41:13,492 INFO   MainThread  threads: 1, rpm: 0, time elapsed: 12s, total requests from finished threads: 0, request fail ratio: 0, invocation error ratio: 0
-2020-06-06 19:41:13,569 INFO   thread_1    Lambda invocation complete. Requests (errors): 267 (0), execution time: 10273ms, sleeping: 0s
-2020-06-06 19:41:13,569 INFO   thread_1    Invoking lambda...
-2020-06-06 19:41:16,493 INFO   MainThread  threads: 1, rpm: 1325, time elapsed: 15s, total requests from finished threads: 267, request fail ratio: 0.0, invocation error ratio: 0.0
-2020-06-06 19:41:19,499 INFO   MainThread  threads: 1, rpm: 1325, time elapsed: 18s, total requests from finished threads: 267, request fail ratio: 0.0, invocation error ratio: 0.0
-2020-06-06 19:41:22,501 INFO   MainThread  threads: 1, rpm: 1325, time elapsed: 21s, total requests from finished threads: 267, request fail ratio: 0.0, invocation error ratio: 0.0
-2020-06-06 19:41:24,006 INFO   thread_1    Lambda invocation complete. Requests (errors): 276 (0), execution time: 10399ms, sleeping: 0s
-2020-06-06 19:41:24,006 INFO   thread_1    Invoking lambda...
-2020-06-06 19:41:25,504 INFO   MainThread  threads: 1, rpm: 1587, time elapsed: 24s, total requests from finished threads: 543, request fail ratio: 0.0, invocation error ratio: 0.0
-2020-06-06 19:41:28,505 INFO   MainThread  threads: 1, rpm: 1587, time elapsed: 27s, total requests from finished threads: 543, request fail ratio: 0.0, invocation error ratio: 0.0
-2020-06-06 19:41:31,507 INFO   MainThread  threads: 1, rpm: 1587, time elapsed: 30s, total requests from finished threads: 543, request fail ratio: 0.0, invocation error ratio: 0.0
-2020-06-06 19:41:34,349 INFO   thread_1    Lambda invocation complete. Requests (errors): 278 (0), execution time: 10313ms, sleeping: 0s
-2020-06-06 19:41:34,349 INFO   thread_1    Invoking lambda...
-2020-06-06 19:41:34,508 INFO   MainThread  threads: 1, rpm: 1613, time elapsed: 33s, total requests from finished threads: 821, request fail ratio: 0.0, invocation error ratio: 0.0
-2020-06-06 19:41:34,508 INFO   MainThread  Time limit reached. Starting ramp down...
-2020-06-06 19:41:34,508 INFO   MainThread  Waiting for all Lambdas to return. This may take up to 10s.
-2020-06-06 19:41:44,926 INFO   thread_1    Lambda invocation complete. Requests (errors): 284 (0), execution time: 10460ms, sleeping: 0s
-2020-06-06 19:41:44,926 INFO   thread_1    thread finished
-2020-06-06 19:41:45,542 INFO   MainThread  Aggregated results: {"requests": {"GET_/": {"median_response_time": 390.0, "total_rps": 27.009331465404667, "avg_response_time": 476.0309271870121, "max_response_time": 2320.3701972961426, "min_response_time": 161.10563278198242, "response_times": {"histogram": [397, 565, 68, 14, 11, 5, 11, 12, 13, 9], "bins": [160.0, 374.0, 588.0, 802.0, 1016.0, 1230.0, 1444.0, 1658.0, 1872.0, 2086.0, 2300.0]}, "total_rpm": 1620.55988792428, "num_requests": 1105}}, "failures": {}, "num_requests": 1105, "num_requests_fail": 0, "total_lambda_execution_time": 41445, "lambda_invocations": 4, "approximate_cost": 8.691200000000001e-05, "request_fail_ratio": 0.0, "invocation_error_ratio": 0.0, "locust_settings": {"locustfile": "locustfile_example.py", "host": "https://example.com", "num_clients": 20, "hatch_rate": 10, "run_time": "10s"}, "lambda_function_name": "lambda_locust", "threads": 1, "ramp_time": 0, "time_limit": 30}
-2020-06-06 19:41:45,542 INFO   MainThread
-============================================================
-Ramp up time: 0s
-Started ramp down after 30s (time_limit)
-Thread count: 1
-Lambda invocation count: 4
-Lambda invocation error ratio: 0.0
-Cumulative lambda execution time: 41445ms
-Total requests sent: 1105
-Total requests failed: 0
-Total request failure ratio: 0.0
+Lambda payload: {'locustfile': 'locustfile_example.py', 'host': 'https://example.com', 'num_users': 2, 'hatch_rate': 10, 'run_time': '15s'}
 
-2020-06-06 19:41:45,542 INFO   MainThread  ===========================================================================================================================
-2020-06-06 19:41:45,543 INFO   MainThread  TYPE    NAME                                                #REQUESTS    MEDIAN   AVERAGE       MIN       MAX  #REQS/SEC
-2020-06-06 19:41:45,543 INFO   MainThread  ===========================================================================================================================
-2020-06-06 19:41:45,543 INFO   MainThread  GET     /                                                        1105     390.0    476.03    161.11   2320.37      27.01
-2020-06-06 19:41:45,543 INFO   MainThread  Exiting...
+[2020-06-28 19:58:22,103] pudli/INFO/root: thread started
+[2020-06-28 19:58:22,107] pudli/INFO/root: threads: 1, rpm: 0, run_time: 0, requests_total: 0, request_fail_ratio: 0, invocation_error_ratio: 0
+[2020-06-28 19:58:25,108] pudli/INFO/root: threads: 1, rpm: 0, run_time: 3, requests_total: 0, request_fail_ratio: 0, invocation_error_ratio: 0
+[2020-06-28 19:58:28,109] pudli/INFO/root: threads: 1, rpm: 0, run_time: 6, requests_total: 0, request_fail_ratio: 0, invocation_error_ratio: 0
+[2020-06-28 19:58:31,110] pudli/INFO/root: threads: 1, rpm: 0, run_time: 9, requests_total: 0, request_fail_ratio: 0, invocation_error_ratio: 0
+[2020-06-28 19:58:34,112] pudli/INFO/root: threads: 1, rpm: 0, run_time: 12, requests_total: 0, request_fail_ratio: 0, invocation_error_ratio: 0
+[2020-06-28 19:58:37,113] pudli/INFO/root: threads: 1, rpm: 0, run_time: 15, requests_total: 0, request_fail_ratio: 0, invocation_error_ratio: 0
+[2020-06-28 19:58:39,001] pudli/INFO/invokust.aws_lambda.lambda_load_test: Invocation complete. Requests (errors): 224 (120), execution time: 15066, sleeping: 0
+[2020-06-28 19:58:40,116] pudli/INFO/root: threads: 1, rpm: 795, run_time: 18, requests_total: 224, request_fail_ratio: 0.5357142857142857, invocation_error_ratio: 0.0
+[2020-06-28 19:58:40,117] pudli/ERROR/root: Error limit reached, invocation error ratio: 0.0, request fail ratio: 0.5357142857142857
+[2020-06-28 19:58:40,117] pudli/INFO/root: Waiting for threads to exit...
+[2020-06-28 19:58:54,086] pudli/INFO/invokust.aws_lambda.lambda_load_test: Invocation complete. Requests (errors): 242 (131), execution time: 15052, sleeping: 0
+[2020-06-28 19:58:54,086] pudli/INFO/root: thread finished
+[2020-06-28 19:58:54,142] pudli/INFO/root: Aggregated results: {"requests": {"GET_/": {"median_response_time": 92.0, "total_rps": 7.18569301694931, "avg_response_time": 91.08271769409947, "max_response_time": 114.66264724731445, "min_response_time": 84.4886302947998, "response_times": {"histogram": [85, 45, 4, 6, 7, 47, 11, 0, 0, 10], "bins": [84.0, 86.6, 89.2, 91.8, 94.4, 97.0, 99.6, 102.2, 104.8, 107.4, 110.0]}, "total_rpm": 431.1415810169586, "num_requests": 215}, "POST_/post": {"median_response_time": 150.0, "total_rps": 8.38878329746517, "avg_response_time": 157.73737294831653, "max_response_time": 1087.4686241149902, "min_response_time": 142.15636253356934, "response_times": {"histogram": [247, 0, 0, 1, 2, 0, 0, 0, 0, 1], "bins": [140.0, 236.0, 332.0, 428.0, 524.0, 620.0, 716.0, 812.0, 908.0, 1004.0, 1100.0]}, "total_rpm": 503.32699784791026, "num_requests": 251}}, "failures": {"POST_/post": {"method": "POST", "name": "/post", "error": "HTTPError('404 Client Error: Not Found for url: https://example.com/post',)", "occurrences": 251}}, "num_requests": 466, "num_requests_fail": 251, "total_lambda_execution_time": 30118, "lambda_invocations": 2, "approximate_cost": 6.3008e-05, "request_fail_ratio": 0.5386266094420601, "invocation_error_ratio": 0.0, "locust_settings": {"locustfile": "locustfile_example.py", "host": "https://example.com", "num_users": 2, "hatch_rate": 10, "run_time": "15s"}, "lambda_function_name": "lambda_locust", "threads": 1, "ramp_time": 0, "time_limit": 15}
+[2020-06-28 19:58:54,142] pudli/INFO/root: ===========================================================================================================================
+[2020-06-28 19:58:54,143] pudli/INFO/root: TYPE    NAME                                                #REQUESTS    MEDIAN   AVERAGE       MIN       MAX  #REQS/SEC
+Scratch
+[2020-06-28 19:58:54,143] pudli/INFO/root: ===========================================================================================================================
+[2020-06-28 19:58:54,143] pudli/INFO/root: GET     /                                                         215      92.0     91.08     84.49    114.66       7.19
+[2020-06-28 19:58:54,144] pudli/INFO/root: POST    /post                                                     251     150.0    157.74    142.16   1087.47       8.39
+[2020-06-28 19:58:54,144] pudli/INFO/root: Exiting...
+```

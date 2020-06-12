@@ -6,10 +6,18 @@ import json
 import signal
 import logging
 import time
-from locust import runners, events
+from locust.env import Environment
+from locust.log import setup_logging
+from locust.stats import stats_printer
 from locust.util.timespan import parse_timespan
 
+setup_logging("INFO", None)
 logger = logging.getLogger(__name__)
+
+
+def sig_term_handler():
+    logger.info("Got SIGTERM signal")
+    sys.exit(0)
 
 
 class LocustLoadTest(object):
@@ -21,7 +29,7 @@ class LocustLoadTest(object):
         self.settings = settings
         self.start_time = None
         self.end_time = None
-        gevent.signal(signal.SIGTERM, self.sig_term_handler)
+        gevent.signal_handler(signal.SIGTERM, sig_term_handler)
 
     def stats(self):
         '''
@@ -30,14 +38,13 @@ class LocustLoadTest(object):
         statistics = {
             'requests': {},
             'failures': {},
-            'num_requests': runners.locust_runner.stats.num_requests,
-            'num_requests_fail': runners.locust_runner.stats.num_failures,
-            'locust_host': runners.locust_runner.host,
+            'num_requests': self.env.runner.stats.num_requests,
+            'num_requests_fail': self.env.runner.stats.num_failures,
             'start_time': self.start_time,
             'end_time': self.end_time
         }
 
-        for name, value in runners.locust_runner.stats.entries.items():
+        for name, value in self.env.runner.stats.entries.items():
             locust_task_name = '{0}_{1}'.format(name[1], name[0])
             statistics['requests'][locust_task_name] = {
                 'request_type': name[1],
@@ -58,7 +65,7 @@ class LocustLoadTest(object):
                 'total_rpm': value.total_rps * 60
             }
 
-        for id, error in runners.locust_runner.errors.items():
+        for id, error in self.env.runner.errors.items():
             error_dict = error.to_dict()
             locust_task_name = '{0}_{1}'.format(error_dict['method'],
                                                 error_dict['name'])
@@ -66,48 +73,66 @@ class LocustLoadTest(object):
 
         return statistics
 
-    def sig_term_handler(self, signum, frame):
-        logger.info("Received sigterm, exiting")
-        logger.info(json.dumps(self.stats()))
-        sys.exit(0)
+    def set_run_time_in_sec(self, run_time_str):
+        try:
+            self.run_time_in_sec = parse_timespan(run_time_str)
+        except ValueError:
+            logger.error("Invalid format for `run_time` parameter: '%s', "
+                         "Valid formats are: 20s, 3m, 2h, 1h20m, 3h30m10s, etc." % run_time_str)
+            sys.exit(1)
+        except TypeError:
+            logger.error("`run_time` must be a string, not %s. Received value: % " % (type(run_time_str), run_time_str))
+            sys.exit(1)
 
     def run(self):
         '''
         Run the load test.
         '''
+
         if self.settings.run_time:
-            try:
-                self.settings.run_time = parse_timespan(self.settings.run_time)
-            except ValueError:
-                logger.error("Valid --run-time formats are:")
-                logger.error("20, 20s, 3m, 2h, 1h20m, 3h30m10s, etc.")
-                sys.exit(1)
-            self.run_time = self.settings.run_time
-            logger.info("Run time limit set to %s seconds" % self.run_time)
+            self.set_run_time_in_sec(run_time_str=self.settings.run_time)
+
+            logger.info("Run time limit set to %s seconds" % self.run_time_in_sec)
 
             def timelimit_stop():
-                logger.info("Time limit reached. Stopping Locust.")
+                logger.info("Run time limit reached: %s seconds. Stopping Locust Runner." % self.run_time_in_sec)
+                self.env.runner.quit()
+                self.end_time = time.time()
+                logger.info(
+                    'Locust completed %s requests with %s errors' %
+                    (self.env.runner.stats.num_requests, len(self.env.runner.errors))
+                )
                 logger.info(json.dumps(self.stats()))
-                logger.info("Run time limit reached: {0} seconds".format(
-                    self.run_time))
-                runners.locust_runner.quit()
 
-            gevent.spawn_later(self.run_time, timelimit_stop)
+            gevent.spawn_later(self.run_time_in_sec, timelimit_stop)
+
+
         try:
-            logger.info("Starting Locust with settings {0}".format(
-                vars(self.settings)))
-            runners.locust_runner = runners.LocalLocustRunner(
-                self.settings.classes, self.settings)
-            runners.locust_runner.start_hatching(wait=True)
+            logger.info("Starting Locust with settings %s " % vars(self.settings))
+
+            self.env = Environment(
+                user_classes=self.settings.classes,
+                host=self.settings.host,
+                tags=self.settings.tags,
+                exclude_tags=self.settings.exclude_tags,
+                reset_stats=self.settings.reset_stats,
+                step_load=self.settings.step_load,
+                stop_timeout=self.settings.stop_timeout,
+            )
+
+            self.env.create_local_runner()
+            gevent.spawn(stats_printer(self.env.stats))
+
+            self.env.runner.start(
+                user_count=self.settings.num_users,
+                hatch_rate=self.settings.hatch_rate
+            )
+
             self.start_time = time.time()
-            runners.locust_runner.greenlet.join()
-            self.end_time = time.time()
-            logger.info('Locust completed {0} requests with {1} errors'.format(
-                runners.locust_runner.stats.num_requests,
-                len(runners.locust_runner.errors)))
+            self.env.runner.greenlet.join()
 
         except Exception as e:
             logger.error("Locust exception {0}".format(repr(e)))
 
         finally:
-            events.quitting.fire()
+            self.env.events.quitting.fire()

@@ -1,26 +1,23 @@
 import invokust
 import logging
 
-from locust import HttpLocust, TaskSet, task, between
+from locust import HttpUser, task, between
 
 logging.basicConfig(level=logging.DEBUG)
 
-class Task(TaskSet):
+
+class WebsiteUser(HttpUser):
+    wait_time = between(0, 0)
+
     @task()
-    def get_home_page(self):
-        '''
-        Gets /
-        '''
+    def my_task(self):
         self.client.get("/")
 
-class WebsiteUser(HttpLocust):
-    task_set = Task
-    wait_time = between(0, 0)
 
 settings = invokust.create_settings(
     classes=[WebsiteUser],
     host='http://example.com',
-    num_clients=1,
+    num_users=1,
     hatch_rate=1,
     run_time='10s'
 )
