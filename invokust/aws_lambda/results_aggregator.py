@@ -2,7 +2,7 @@
 
 from numpy import histogram
 
-def results_aggregator(results):
+def results_aggregator(results, lambda_timeout=300000):
     '''
     Takes a list of many individual results and returns a dictionary of aggregated
     data.
@@ -54,7 +54,7 @@ def results_aggregator(results):
 
     request_tasks = _flatten_unique([list(stat['requests'].keys()) for stat in results])
     failed_tasks = _flatten_unique([list(stat['failures'].keys()) for stat in results])
-    total_lambda_execution_time = sum([(300000 - stat['remaining_time']) for stat in results])
+    total_lambda_execution_time = sum([(lambda_timeout - stat['remaining_time']) for stat in results])
     memory_limit = _get_max(results, 'memory_limit')
 
     agg_results = {

@@ -21,7 +21,7 @@ class LambdaLoadTest(object):
     An object to run and collect statistics and results from multiple parallel locust load
     tests running on AWS Lambda
     '''
-    def __init__(self, lambda_function_name, threads, ramp_time, time_limit, lambda_payload):
+    def __init__(self, lambda_function_name, threads, ramp_time, time_limit, lambda_payload, lambda_timeout=300000):
         self.lock = threading.Lock()
         self.start_time = time.time()
         self.logger = logging.getLogger()
@@ -41,6 +41,7 @@ class LambdaLoadTest(object):
         self.thread_data = {}
         self.print_stats_delay = 3
         self.exit_threads = False
+        self.lambda_timeout = lambda_timeout
 
     def update_thread_data(self, thread_id, key, value):
         '''
@@ -259,7 +260,7 @@ class LambdaLoadTest(object):
             results = json.loads(payload_json_str)
             function_duration = function_end_time - function_start_time
             total_rpm = results['num_requests'] / (function_duration / 60)
-            lambda_execution_time = 300000 - results['remaining_time']
+            lambda_execution_time = self.lambda_timeout - results['remaining_time']
 
             self.append_locust_results(results)
             self.increase_requests_fail(results['num_requests_fail'])
