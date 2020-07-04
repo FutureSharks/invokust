@@ -5,6 +5,7 @@ verify_ssl = true
 
 [dev-packages]
 black = "*"
+pre-commit = "*"
 
 [packages]
 "zope.interface" = {editable = true, path = "."}
