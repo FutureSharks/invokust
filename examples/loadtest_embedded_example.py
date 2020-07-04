@@ -16,10 +16,10 @@ class WebsiteUser(HttpUser):
 
 settings = invokust.create_settings(
     classes=[WebsiteUser],
-    host='http://example.com',
+    host="http://example.com",
     num_users=1,
     hatch_rate=1,
-    run_time='10s'
+    run_time="10s",
 )
 
 loadtest = invokust.LocustLoadTest(settings)

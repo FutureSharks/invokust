@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+
 sys.path.insert(0, "python-packages")
 
 import logging
@@ -9,6 +10,7 @@ from invokust.aws_lambda import get_lambda_runtime_info
 from invokust import LocustLoadTest, create_settings
 
 logging.basicConfig(level=logging.INFO)
+
 
 def handler(event=None, context=None):
     try:

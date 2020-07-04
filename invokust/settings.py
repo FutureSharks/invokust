@@ -4,10 +4,19 @@ import os
 
 from locust.main import load_locustfile
 
-def create_settings(from_environment=False, locustfile=None,
-        classes=None, host=None, num_users=None,
-        hatch_rate=None, reset_stats=False, run_time="3m", loglevel='INFO'):
-    '''
+
+def create_settings(
+    from_environment=False,
+    locustfile=None,
+    classes=None,
+    host=None,
+    num_users=None,
+    hatch_rate=None,
+    reset_stats=False,
+    run_time="3m",
+    loglevel="INFO",
+):
+    """
     Returns a settings object to configure the locust load test.
 
     Arguments
@@ -24,9 +33,9 @@ def create_settings(from_environment=False, locustfile=None,
     If from_environment is set to True then this function will attempt to set
     the attributes from environment variables. The environment variables are
     named LOCUST_ + attribute name in upper case.
-    '''
+    """
 
-    settings = type('', (), {})()
+    settings = type("", (), {})()
 
     settings.from_environment = from_environment
     settings.locustfile = locustfile
@@ -40,39 +49,48 @@ def create_settings(from_environment=False, locustfile=None,
     settings.step_load = False
     settings.stop_timeout = None
 
-
     # parameters to configure test
     settings.num_users = num_users
     settings.run_time = run_time
     settings.hatch_rate = hatch_rate
 
     if from_environment:
-        for attribute in ['locustfile', 'classes', 'host', 'run_time', 'num_users', 'hatch_rate', 'loglevel']:
-            var_name = 'LOCUST_{0}'.format(attribute.upper())
+        for attribute in [
+            "locustfile",
+            "classes",
+            "host",
+            "run_time",
+            "num_users",
+            "hatch_rate",
+            "loglevel",
+        ]:
+            var_name = "LOCUST_{0}".format(attribute.upper())
             var_value = os.environ.get(var_name)
             if var_value:
                 setattr(settings, attribute, var_value)
 
     if settings.locustfile is None and settings.classes is None:
-        raise Exception('One of locustfile or classes must be specified')
+        raise Exception("One of locustfile or classes must be specified")
 
     if settings.locustfile and settings.classes:
-        raise Exception('Only one of locustfile or classes can be specified')
+        raise Exception("Only one of locustfile or classes can be specified")
 
     if settings.locustfile:
         docstring, classes = load_locustfile(settings.locustfile)
         settings.classes = [classes[n] for n in classes]
     else:
         if isinstance(settings.classes, str):
-            settings.classes = settings.classes.split(',')
+            settings.classes = settings.classes.split(",")
             for idx, val in enumerate(settings.classes):
                 # This needs fixing
                 settings.classes[idx] = eval(val)
 
-    for attribute in ['classes', 'host', 'num_users', 'hatch_rate']:
+    for attribute in ["classes", "host", "num_users", "hatch_rate"]:
         val = getattr(settings, attribute, None)
         if not val:
-            raise Exception('configuration error, attribute not set: {0}'.format(attribute))
+            raise Exception(
+                "configuration error, attribute not set: {0}".format(attribute)
+            )
 
         if isinstance(val, str) and val.isdigit():
             setattr(settings, attribute, int(val))
