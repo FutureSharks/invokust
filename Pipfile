@@ -4,9 +4,13 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+black = "*"
 
 [packages]
 "zope.interface" = {editable = true, path = "."}
 
 [requires]
 python_version = "3.7"
+
+[pipenv]
+allow_prereleases = true
