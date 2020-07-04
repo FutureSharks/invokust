@@ -14,7 +14,7 @@ def parse_arguments():
     p.add_argument('-n', '--function_name', help='Lambda function name', required=True)
     p.add_argument('-f', '--locust_file', help='Locust file', required=True)
     p.add_argument('-o', '--locust_host', help='Locust host', required=True)
-    p.add_argument('-c', '--locust_clients', help='Locust clients', default=20, type=int)
+    p.add_argument('-u', '--locust_users', help='Number of Locust users', default=20, type=int)
     p.add_argument('-r', '--ramp_time', help='Ramp up time (seconds)', default=0, type=int)
     p.add_argument('-t', '--threads', help='Threads to run in parallel', default=1, type=int)
     p.add_argument('-l', '--time_limit', help='Time limit for run time (seconds)', type=int)
@@ -69,11 +69,11 @@ if __name__ == '__main__':
     # AWS Lambda has a maximum execution time ("timeout"). We limit the execution time to 3 minutes if the overall
     # load test time is longer, to make sure the lambda will not exceed the timeout.
 
-    lambda_runtime = f'{min(args.time_limit, 180)}s'
+    lambda_runtime = f"{args.time_limit}s" if args.time_limit < 180 else "3m"
     lambda_payload = {
         'locustfile': args.locust_file,
         'host': args.locust_host,
-        'num_clients': args.locust_clients,
+        'num_users': args.locust_users,
         'hatch_rate': 10,
         'run_time': lambda_runtime,
     }

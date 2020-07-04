@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from locust import HttpLocust, TaskSet, task, between
+from locust import HttpUser, task, between
 
 
-class HomePageTaskSet(TaskSet):
+class WebsiteUser(HttpUser):
+    wait_time = between(0, 0)
+
     @task()
     def get_home_page(self):
         '''
@@ -16,9 +18,4 @@ class HomePageTaskSet(TaskSet):
         '''
         Posts to /post
         '''
-        response=self.client.post("/post", {"username":"password"})
-
-
-class WebsiteUser(HttpLocust):
-    task_set = HomePageTaskSet
-    wait_time = between(0, 0)
+        response = self.client.post("/post", {"username": "password"})

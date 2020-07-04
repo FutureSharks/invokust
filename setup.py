@@ -5,14 +5,14 @@ with open("README.md", "r") as fh:
 
 setup(
     name = 'invokust',
-    version = '0.73',
+    version = '1.0a',
     author = 'Max Williams',
     author_email = 'futuresharks@gmail.com',
     description = 'A small wrapper for locust to allow running load tests from within Python or on AWS Lambda',
     long_description=long_description,
     long_description_content_type="text/markdown",
     url = 'https://github.com/FutureSharks/invokust',
-    download_url  =  'https://github.com/FutureSharks/invokust/archive/0.73.tar.gz',
+    download_url  =  'https://github.com/FutureSharks/invokust/archive/1.0a.tar.gz',
     license = 'MIT',
     scripts = ['invokr.py'],
     packages = [
@@ -20,12 +20,12 @@ setup(
         'invokust.aws_lambda',
     ],
     install_requires = [
-        'locustio==0.13.5',
+        'locust>=1.0.3',
         'boto3',
         'pyzmq',
         'numpy'
     ],
-    keywords = ['testing', 'loadtest', 'lamba', 'locust'],
+    keywords = ['testing', 'loadtest', 'lambda', 'locust'],
     classifiers = [
         'Topic :: Software Development :: Quality Assurance',
         'Topic :: Software Development :: Testing',
