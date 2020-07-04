@@ -10,3 +10,6 @@ dist
 build
 .terraform
 .idea
+.DS_Store
+.coverage
+htmlcov/
