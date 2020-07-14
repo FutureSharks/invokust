@@ -6,6 +6,8 @@ verify_ssl = true
 [dev-packages]
 black = "*"
 pre-commit = "*"
+pytest = "*"
+pytest-cov = "*"
 
 [packages]
 "zope.interface" = {editable = true, path = "."}
