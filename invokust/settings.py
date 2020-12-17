@@ -11,7 +11,7 @@ def create_settings(
     classes=None,
     host=None,
     num_users=None,
-    hatch_rate=None,
+    spawn_rate=None,
     reset_stats=False,
     run_time="3m",
     loglevel="INFO",
@@ -26,7 +26,7 @@ def create_settings(
         classes: locust classes to use for load test
         host: host for load testing
         num_users: number of users to simulate in load test
-        hatch_rate: number of users per second to start
+        spawn_rate: number of users per second to start
         reset_stats: Whether to reset stats after all users are hatched
         run_time: The length of time to run the test for. Cannot exceed the duration limit set by lambda
 
@@ -52,7 +52,7 @@ def create_settings(
     # parameters to configure test
     settings.num_users = num_users
     settings.run_time = run_time
-    settings.hatch_rate = hatch_rate
+    settings.spawn_rate = spawn_rate
 
     if from_environment:
         for attribute in [
@@ -61,7 +61,7 @@ def create_settings(
             "host",
             "run_time",
             "num_users",
-            "hatch_rate",
+            "spawn_rate",
             "loglevel",
         ]:
             var_name = "LOCUST_{0}".format(attribute.upper())
@@ -76,7 +76,7 @@ def create_settings(
         raise Exception("Only one of locustfile or classes can be specified")
 
     if settings.locustfile:
-        docstring, classes = load_locustfile(settings.locustfile)
+        docstring, classes, shape_class = load_locustfile(settings.locustfile)
         settings.classes = [classes[n] for n in classes]
     else:
         if isinstance(settings.classes, str):
@@ -85,7 +85,7 @@ def create_settings(
                 # This needs fixing
                 settings.classes[idx] = eval(val)
 
-    for attribute in ["classes", "host", "num_users", "hatch_rate"]:
+    for attribute in ["classes", "host", "num_users", "spawn_rate"]:
         val = getattr(settings, attribute, None)
         if not val:
             raise Exception(

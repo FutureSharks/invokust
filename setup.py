@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="invokust",
-    version="1.0a",
+    version="0.74",
     author="Max Williams",
     author_email="futuresharks@gmail.com",
     description="A small wrapper for locust to allow running load tests from within Python or on AWS Lambda",
@@ -16,7 +16,7 @@ setup(
     license="MIT",
     scripts=["invokr.py"],
     packages=["invokust", "invokust.aws_lambda",],
-    install_requires=["locust>=1.0.3", "boto3", "pyzmq", "numpy"],
+    install_requires=["locust>=1.4.1", "boto3", "pyzmq", "numpy"],
     keywords=["testing", "loadtest", "lambda", "locust"],
     classifiers=[
         "Topic :: Software Development :: Quality Assurance",

@@ -12,13 +12,12 @@ class TestCreateSettings(TestCase):
             locustfile="tests/test_locustfile.py",
             host="http://dummy.host",
             num_users=2,
-            hatch_rate=1,
+            spawn_rate=1,
         )
 
         assert settings.tags == None
         assert settings.exclude_tags == None
         assert settings.reset_stats == False
-        assert settings.step_load == False
         assert settings.stop_timeout == None
 
     def test_not_from_environment_works(self):
@@ -27,13 +26,13 @@ class TestCreateSettings(TestCase):
             locustfile="tests/test_locustfile.py",
             host="http://dummy.host",
             num_users=2,
-            hatch_rate=1,
+            spawn_rate=1,
         )
 
         assert isinstance(settings.classes, List)
         assert settings.host == "http://dummy.host"
         assert settings.num_users == 2
-        assert settings.hatch_rate == 1
+        assert settings.spawn_rate == 1
 
         assert settings.from_environment == False
         assert settings.tags == None
@@ -46,14 +45,14 @@ class TestCreateSettings(TestCase):
 
         with self.assertRaises(Exception):
             create_settings(
-                locustfile="tests/test_locustfile.py", num_users=2, hatch_rate=1
+                locustfile="tests/test_locustfile.py", num_users=2, spawn_rate=1
             )
 
         with self.assertRaises(Exception):
             create_settings(
                 locustfile="tests/test_locustfile.py",
                 host="http://dummy.host",
-                hatch_rate=1,
+                spawn_rate=1,
             )
 
         with self.assertRaises(Exception):
@@ -78,7 +77,7 @@ class TestCreateSettings(TestCase):
         assert settings.host == "http://dummy.host"
         assert isinstance(settings.classes, List)
         assert settings.num_users == 2
-        assert settings.hatch_rate == 1
+        assert settings.spawn_rate == 1
 
     def test_classes_passed(self):
         class WebsiteUser(HttpUser):
@@ -90,7 +89,7 @@ class TestCreateSettings(TestCase):
                 self.client.get("/")
 
         settings = create_settings(
-            classes=[WebsiteUser], host="http://dummy.host", num_users=2, hatch_rate=1
+            classes=[WebsiteUser], host="http://dummy.host", num_users=2, spawn_rate=1
         )
 
         assert isinstance(settings.classes, List)
@@ -99,7 +98,7 @@ class TestCreateSettings(TestCase):
     def test_locustfile_and_classes_missing(self):
         with self.assertRaises(Exception):
             create_settings(
-                num_users=2, hatch_rate=1, host="http://dummy.host",
+                num_users=2, spawn_rate=1, host="http://dummy.host",
             )
 
     def test_fails_as_both_locustfile_and_classes_specified(self):
@@ -116,6 +115,6 @@ class TestCreateSettings(TestCase):
                 classes=[WebsiteUser],
                 locustfile="tests/test_locustfile.py",
                 num_users=2,
-                hatch_rate=1,
+                spawn_rate=1,
                 host="http://dummy.host",
             )

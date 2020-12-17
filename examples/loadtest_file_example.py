@@ -9,7 +9,7 @@ settings = invokust.create_settings(
     locustfile="locustfile_example.py",
     host="http://example.com",
     num_users=1,
-    hatch_rate=1,
+    spawn_rate=1,
     run_time="10s",
     loglevel="DEBUG",
 )

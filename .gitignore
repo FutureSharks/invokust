@@ -4,7 +4,7 @@ __pycache__
 python-packages
 .python-version
 .terraform
-terraform.tfstate*
+*tfstate*
 invokust.egg-info
 dist
 build
@@ -13,3 +13,4 @@ build
 .DS_Store
 .coverage
 htmlcov/
+output.txt

@@ -124,7 +124,6 @@ class LocustLoadTest(object):
                 tags=self.settings.tags,
                 exclude_tags=self.settings.exclude_tags,
                 reset_stats=self.settings.reset_stats,
-                step_load=self.settings.step_load,
                 stop_timeout=self.settings.stop_timeout,
             )
 
@@ -132,7 +131,7 @@ class LocustLoadTest(object):
             gevent.spawn(stats_printer(self.env.stats))
 
             self.env.runner.start(
-                user_count=self.settings.num_users, hatch_rate=self.settings.hatch_rate
+                user_count=self.settings.num_users, spawn_rate=self.settings.spawn_rate
             )
 
             self.start_time = time.time()

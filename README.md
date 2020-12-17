@@ -19,16 +19,16 @@ import invokust
 
 settings = invokust.create_settings(
     locustfile='locustfile_example.py',
-    host='http://example.com',
-    num_clients=1,
-    hatch_rate=1,
+    host='http://www.iana.org',
+    num_users=1,
+    spawn_rate=1,
     run_time='3m'
     )
 
 loadtest = invokust.LocustLoadTest(settings)
 loadtest.run()
 loadtest.stats()
-'{"num_requests_fail": 0, "num_requests": 10, "success": {"/": {"median_response_time": 210, "total_rpm": 48.13724156297892, "request_type": "GET", "min_response_time": 210, "response_times": {"720": 1, "210": 7, "820": 1, "350": 1}, "num_requests": 10, "response_time_percentiles": {"65": 210, "95": 820, "75": 350, "85": 720, "55": 210}, "total_rps": 0.802287359382982, "max_response_time": 824, "avg_response_time": 337.2}}, "locust_host": "http://example.com", "fail": {}, "num_requests_success": 10}'
+"{'requests': {'GET_/': {'request_type': 'GET', 'num_requests': 923, 'min_response_time': 113.54585000000128, 'median_response_time': 120.0, 'avg_response_time': 145.68631223510297, 'max_response_time': 331.89674199999786, 'response_times': {270.0: 2, 120.0: 479, 150.0: 17, 200.0: 83, 210.0: 80, 160.0: 20, 190.0: 55, 220.0: 9, 130.0: 30, 170.0: 22, 230.0: 5, 110.0: 69, 140.0: 19, 180.0: 27, 240.0: 2, 320.0: 3, 330.0: 1}, 'response_time_percentiles': {55: 120.0, 65: 150.0, 75: 190.0, 85: 200.0, 95: 210.0}, 'total_rps': 5.136500841568583, 'total_rpm': 308.190050494115}, 'GET_/about': {'request_type': 'GET', 'num_requests': 308, 'min_response_time': 113.23035299999873, 'median_response_time': 120.0, 'avg_response_time': 146.04534828246747, 'max_response_time': 290.40608500000076, 'response_times': {120.0: 147, 200.0: 36, 190.0: 25, 110.0: 27, 160.0: 12, 150.0: 6, 180.0: 13, 210.0: 12, 170.0: 13, 220.0: 2, 130.0: 8, 140.0: 6, 290.0: 1}, 'response_time_percentiles': {55: 120.0, 65: 160.0, 75: 180.0, 85: 200.0, 95: 200.0}, 'total_rps': 1.7140219492991589, 'total_rpm': 102.84131695794953}}, 'failures': {}, 'num_requests': 1231, 'num_requests_fail': 0, 'start_time': 1608207776.312684, 'end_time': 1608207956.070369}"
 ```
 
 Running a load test without locust file:
@@ -50,16 +50,16 @@ class WebsiteUser(HttpUser):
 
 settings = invokust.create_settings(
     classes=[WebsiteUser],
-    host='http://example.com',
+    host='http://www.iana.org',
     num_users=1,
-    hatch_rate=1,
+    spawn_rate=1,
     run_time='3m'
 )
 
 loadtest = invokust.LocustLoadTest(settings)
 loadtest.run()
 loadtest.stats()
-'{"num_requests_fail": 0, "num_requests": 10, "success": {"/": {"median_response_time": 330, "total_rpm": 40.53552561950598, "request_type": "GET", "min_response_time": 208, "response_times": {"230": 1, "1000": 1, "780": 1, "330": 1, "1100": 1, "210": 3, "790": 1, "670": 1}, "num_requests": 10, "response_time_percentiles": {"65": 780, "95": 1100, "75": 790, "85": 1000, "55": 670}, "total_rps": 0.6755920936584331, "max_response_time": 1111, "avg_response_time": 552.8}}, "locust_host": "http://example.com", "fail": {}, "num_requests_success": 10}'
+"{'requests': {'GET_/': {'request_type': 'GET', 'num_requests': 71, 'min_response_time': 138.60819600000696, 'median_response_time': 360.0, 'avg_response_time': 327.0060322394364, 'max_response_time': 603.2539320000012, 'response_times': {590.0: 1, 210.0: 3, 370.0: 2, 230.0: 5, 200.0: 2, 490.0: 2, 420.0: 4, 480.0: 1, 190.0: 5, 180.0: 6, 400.0: 3, 270.0: 1, 260.0: 3, 280.0: 2, 360.0: 4, 470.0: 2, 460.0: 3, 350.0: 1, 250.0: 1, 380.0: 4, 410.0: 2, 140.0: 1, 440.0: 1, 600.0: 1, 390.0: 2, 450.0: 1, 430.0: 3, 290.0: 1, 240.0: 2, 340.0: 1, 220.0: 1}, 'response_time_percentiles': {55: 370.0, 65: 390.0, 75: 420.0, 85: 450.0, 95: 490.0}, 'total_rps': 0.4443058717398536, 'total_rpm': 26.658352304391215}}, 'failures': {'GET_/': {'method': 'GET', 'name': '/', 'error': "ConnectionError(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))", 'occurrences': 1}}, 'num_requests': 71, 'num_requests_fail': 1, 'start_time': 1608208114.321394, 'end_time': 1608208276.0525749}"
 ```
 
 ## Running Locust on AWS Lambda
@@ -85,7 +85,7 @@ pip3 install invokust --target=python-packages
 Or if running on a Mac (python packages need to be compiled for 64 bit Linux) you can use docker:
 
 ```
-docker run -it --volume=$PWD/python-packages:/python-packages python:3.6 bash -c "pip install invokust --target=/python-packages"
+docker run -it --volume=$PWD:/temp python:3.6 bash -c "pip install /temp --target=/temp/python-packages"
 ```
 
 Create the zip file:
@@ -122,7 +122,7 @@ The Locust settings can be passed to the Lambda function or can be set from envi
 [AWS CLI](https://aws.amazon.com/cli/) example with Locust settings in a payload:
 
 ```
-aws lambda invoke --function-name lambda_locust --invocation-type RequestResponse --payload '{"locustfile": "locustfile_example.py", "host":"https://example.com", "num_requests":"20", "num_clients": "1", "hatch_rate": "1", "run_time":"3m"}' output.txt
+aws lambda invoke --function-name lambda_locust --invocation-type RequestResponse --payload '{"locustfile": "locustfile_example.py", "host":"http://www.iana.org", "num_users": "1", "spawn_rate": "1", "run_time":"3m"}' --cli-binary-format raw-in-base64-out output.txt
 {
     "StatusCode": 200
 }
@@ -144,8 +144,8 @@ client = session.client('lambda', config=config)
 lambda_payload = {
     'locustfile': 'locustfile_example.py',
     'host': 'https://example.com',
-    'num_clients': '1',
-    'hatch_rate': 1,
+    'num_users': '1',
+    'spawn_rate': 1,
     'run_time':'3m'
 }
 
@@ -167,8 +167,8 @@ logging.basicConfig(level=logging.INFO)
 lambda_payload = {
     'locustfile': 'locustfile_example.py',
     'host': 'https://example.com',
-    'num_clients': '1',
-    'hatch_rate': 1,
+    'num_users': 1,
+    'spawn_rate': 1,
     'run_time':'3m'
 }
 
@@ -191,7 +191,7 @@ Starting load test...
 Function name: lambda_locust
 Ramp time: 0s
 Threads: 2
-Lambda payload: {'locustfile': 'locustfile_example.py', 'host': 'https://example.com', 'num_clients': '1', 'hatch_rate': 1, 'run_time': '3m'}
+Lambda payload: {'locustfile': 'locustfile_example.py', 'host': 'https://example.com', 'num_users': '1', 'spawn_rate': 1, 'run_time': '3m'}
 Start ramping down after: 30s
 INFO:root:thread started
 INFO:root:Invoking lambda...
@@ -227,7 +227,7 @@ Starting load test
 Function: lambda_locust
 Ramp time: 0
 Threads: 1
-Lambda payload: {'locustfile': 'locustfile_example.py', 'host': 'https://example.com', 'num_users': 2, 'hatch_rate': 10, 'run_time': '15s'}
+Lambda payload: {'locustfile': 'locustfile_example.py', 'host': 'https://example.com', 'num_users': 2, 'spawn_rate': 10, 'run_time': '15s'}
 
 [2020-06-28 19:58:22,103] pudli/INFO/root: thread started
 [2020-06-28 19:58:22,107] pudli/INFO/root: threads: 1, rpm: 0, run_time: 0, requests_total: 0, request_fail_ratio: 0, invocation_error_ratio: 0
@@ -242,7 +242,7 @@ Lambda payload: {'locustfile': 'locustfile_example.py', 'host': 'https://example
 [2020-06-28 19:58:40,117] pudli/INFO/root: Waiting for threads to exit...
 [2020-06-28 19:58:54,086] pudli/INFO/invokust.aws_lambda.lambda_load_test: Invocation complete. Requests (errors): 242 (131), execution time: 15052, sleeping: 0
 [2020-06-28 19:58:54,086] pudli/INFO/root: thread finished
-[2020-06-28 19:58:54,142] pudli/INFO/root: Aggregated results: {"requests": {"GET_/": {"median_response_time": 92.0, "total_rps": 7.18569301694931, "avg_response_time": 91.08271769409947, "max_response_time": 114.66264724731445, "min_response_time": 84.4886302947998, "response_times": {"histogram": [85, 45, 4, 6, 7, 47, 11, 0, 0, 10], "bins": [84.0, 86.6, 89.2, 91.8, 94.4, 97.0, 99.6, 102.2, 104.8, 107.4, 110.0]}, "total_rpm": 431.1415810169586, "num_requests": 215}, "POST_/post": {"median_response_time": 150.0, "total_rps": 8.38878329746517, "avg_response_time": 157.73737294831653, "max_response_time": 1087.4686241149902, "min_response_time": 142.15636253356934, "response_times": {"histogram": [247, 0, 0, 1, 2, 0, 0, 0, 0, 1], "bins": [140.0, 236.0, 332.0, 428.0, 524.0, 620.0, 716.0, 812.0, 908.0, 1004.0, 1100.0]}, "total_rpm": 503.32699784791026, "num_requests": 251}}, "failures": {"POST_/post": {"method": "POST", "name": "/post", "error": "HTTPError('404 Client Error: Not Found for url: https://example.com/post',)", "occurrences": 251}}, "num_requests": 466, "num_requests_fail": 251, "total_lambda_execution_time": 30118, "lambda_invocations": 2, "approximate_cost": 6.3008e-05, "request_fail_ratio": 0.5386266094420601, "invocation_error_ratio": 0.0, "locust_settings": {"locustfile": "locustfile_example.py", "host": "https://example.com", "num_users": 2, "hatch_rate": 10, "run_time": "15s"}, "lambda_function_name": "lambda_locust", "threads": 1, "ramp_time": 0, "time_limit": 15}
+[2020-06-28 19:58:54,142] pudli/INFO/root: Aggregated results: {"requests": {"GET_/": {"median_response_time": 92.0, "total_rps": 7.18569301694931, "avg_response_time": 91.08271769409947, "max_response_time": 114.66264724731445, "min_response_time": 84.4886302947998, "response_times": {"histogram": [85, 45, 4, 6, 7, 47, 11, 0, 0, 10], "bins": [84.0, 86.6, 89.2, 91.8, 94.4, 97.0, 99.6, 102.2, 104.8, 107.4, 110.0]}, "total_rpm": 431.1415810169586, "num_requests": 215}, "POST_/post": {"median_response_time": 150.0, "total_rps": 8.38878329746517, "avg_response_time": 157.73737294831653, "max_response_time": 1087.4686241149902, "min_response_time": 142.15636253356934, "response_times": {"histogram": [247, 0, 0, 1, 2, 0, 0, 0, 0, 1], "bins": [140.0, 236.0, 332.0, 428.0, 524.0, 620.0, 716.0, 812.0, 908.0, 1004.0, 1100.0]}, "total_rpm": 503.32699784791026, "num_requests": 251}}, "failures": {"POST_/post": {"method": "POST", "name": "/post", "error": "HTTPError('404 Client Error: Not Found for url: https://example.com/post',)", "occurrences": 251}}, "num_requests": 466, "num_requests_fail": 251, "total_lambda_execution_time": 30118, "lambda_invocations": 2, "approximate_cost": 6.3008e-05, "request_fail_ratio": 0.5386266094420601, "invocation_error_ratio": 0.0, "locust_settings": {"locustfile": "locustfile_example.py", "host": "https://example.com", "num_users": 2, "spawn_rate": 10, "run_time": "15s"}, "lambda_function_name": "lambda_locust", "threads": 1, "ramp_time": 0, "time_limit": 15}
 [2020-06-28 19:58:54,142] pudli/INFO/root: ===========================================================================================================================
 [2020-06-28 19:58:54,143] pudli/INFO/root: TYPE    NAME                                                #REQUESTS    MEDIAN   AVERAGE       MIN       MAX  #REQS/SEC
 Scratch
