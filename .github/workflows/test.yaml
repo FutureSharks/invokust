@@ -1,19 +1,42 @@
 on: [pull_request]
 name: Test
 jobs:
-  test:
-    name: Run tests
-    runs-on: ubuntu-latest
+  build:
+    name: ${{matrix.os}} / ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.7]
+        os: [MacOS, Ubuntu]
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Pipenv for Github Actions
-      uses: VaultVulp/action-pipenv@v2.0.1
-    - name: Install dependecies
-      uses: VaultVulp/action-pipenv@v2.0.1
+    - uses: actions/checkout@v1
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
       with:
-        command: install -d
-    - name: Test
-      uses: VaultVulp/action-pipenv@v2.0.1
-      with:
-        command: run pytest
+        python-version: ${{ matrix.python-version }}
+
+    - name: Get python path
+      id: python-path
+      run: |
+        echo ::set-output name=path::$(python -c "import sys; print(sys.executable)")
+    - name: Install latest pip, setuptools, wheel
+      run: |
+        python -m pip install --upgrade pip setuptools wheel --upgrade-strategy=eager
+    - name: Install dependencies
+      env:
+        PIPENV_DEFAULT_PYTHON_VERSION: ${{ matrix.python-version }}
+        PYTHONWARNINGS: ignore:DEPRECATION
+        PYTHONIOENCODING: 'utf-8'
+        GIT_ASK_YESNO: 'false'
+      run: |
+        pipenv install --deploy --dev --python=${{ steps.python-path.outputs.path }}
+    - name: Run tests
+      env:
+        PIPENV_DEFAULT_PYTHON_VERSION: ${{ matrix.python-version }}
+        PYTHONWARNINGS: ignore:DEPRECATION
+        GIT_ASK_YESNO: 'false'
+      run: |
+        pipenv run pytest
