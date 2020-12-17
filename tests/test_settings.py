@@ -70,7 +70,7 @@ class TestCreateSettings(TestCase):
         os.environ["LOCUST_HOST"] = "http://dummy.host"
         os.environ["LOCUST_LOCUSTFILE"] = "tests/test_locustfile.py"
         os.environ["LOCUST_NUM_USERS"] = "2"
-        os.environ["LOCUST_HATCH_RATE"] = "1"
+        os.environ["LOCUST_SPAWN_RATE"] = "1"
 
         settings = create_settings(from_environment=True)
 
