@@ -1,0 +1,19 @@
+on: [pull_request]
+name: Test
+jobs:
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Pipenv for Github Actions
+      uses: VaultVulp/action-pipenv@v2.0.1
+    - name: Install dependecies
+      uses: VaultVulp/action-pipenv@v2.0.1
+      with:
+        command: install
+    - name: Test
+      uses: VaultVulp/action-pipenv@v2.0.1
+      with:
+        command: run pytest
