@@ -63,7 +63,9 @@ class TestCreateSettings(TestCase):
             )
 
         with self.assertRaises(Exception):
-            create_settings(locustfile="tests/test_locustfile.py",)
+            create_settings(
+                locustfile="tests/test_locustfile.py",
+            )
 
     def test_from_env(self):
 
@@ -98,7 +100,9 @@ class TestCreateSettings(TestCase):
     def test_locustfile_and_classes_missing(self):
         with self.assertRaises(Exception):
             create_settings(
-                num_users=2, spawn_rate=1, host="http://dummy.host",
+                num_users=2,
+                spawn_rate=1,
+                host="http://dummy.host",
             )
 
     def test_fails_as_both_locustfile_and_classes_specified(self):
