@@ -12,7 +12,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/FutureSharks/invokust",
-    download_url="https://github.com/FutureSharks/invokust/archive/1.0a.tar.gz",
+    download_url="https://github.com/FutureSharks/invokust/archive/0.74.tar.gz",
     license="MIT",
     scripts=["invokr.py"],
     packages=["invokust", "invokust.aws_lambda",],
