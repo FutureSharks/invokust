@@ -68,7 +68,7 @@ class LambdaLoadTest(object):
         Returns number of load test threads running
         """
         return len(
-            [t for t in threading.enumerate() if t.getName() is not "MainThread"]
+            [t for t in threading.enumerate() if t.getName() != "MainThread"]
         )
 
     def get_time_elapsed(self):
