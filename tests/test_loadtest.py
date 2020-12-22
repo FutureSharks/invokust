@@ -10,9 +10,9 @@ class WebsiteUser(HttpUser):
 
     @task()
     def get_home_page(self):
-        '''
+        """
         Gets /
-        '''
+        """
         self.client.get("/")
 
 
@@ -20,11 +20,11 @@ class TestLocustLoadTest(TestCase):
     def test_basic_load_test(self):
         settings = create_settings(
             classes=[WebsiteUser],
-            host='https://github.com',
+            host="https://github.com",
             num_users=1,
             spawn_rate=1,
             run_time="1m",
-            )
+        )
 
         loadtest = LocustLoadTest(settings)
         loadtest.run()
