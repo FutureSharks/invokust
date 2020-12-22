@@ -6,16 +6,16 @@ from locust import HttpUser, task, between
 class WebsiteUser(HttpUser):
     wait_time = between(0, 0)
 
-    @task()
+    @task(3)
     def get_home_page(self):
         """
         Gets /
         """
         self.client.get("/")
 
-    @task()
-    def login(self):
+    @task(1)
+    def get_about(self):
         """
-        Posts to /post
+        Gets /about
         """
-        response = self.client.post("/post", {"username": "password"})
+        response = self.client.get("/about")

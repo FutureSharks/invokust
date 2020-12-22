@@ -1,0 +1,39 @@
+on: [pull_request]
+name: Test
+jobs:
+  build:
+    name: ${{matrix.os}} / ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.7]
+        os: [MacOS, Ubuntu]
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install latest pip, setuptools, wheel
+      run: |
+        python -m pip install --upgrade pip setuptools wheel --upgrade-strategy=eager
+        pip install pipenv
+    - name: Install dependencies
+      env:
+        PIPENV_DEFAULT_PYTHON_VERSION: ${{ matrix.python-version }}
+        PYTHONWARNINGS: ignore:DEPRECATION
+        PYTHONIOENCODING: 'utf-8'
+        GIT_ASK_YESNO: 'false'
+      run: |
+        pipenv install --deploy --dev
+    - name: Run tests
+      env:
+        PIPENV_DEFAULT_PYTHON_VERSION: ${{ matrix.python-version }}
+        PYTHONWARNINGS: ignore:DEPRECATION
+        GIT_ASK_YESNO: 'false'
+        AWS_DEFAULT_REGION: eu-west-1
+      run: |
+        pipenv run pytest

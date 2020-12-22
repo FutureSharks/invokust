@@ -117,7 +117,7 @@ if __name__ == "__main__":
         "locustfile": args.locust_file,
         "host": args.locust_host,
         "num_users": args.locust_users,
-        "hatch_rate": 10,
+        "spawn_rate": 10,
         "run_time": lambda_runtime,
     }
 
