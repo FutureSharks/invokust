@@ -34,5 +34,6 @@ jobs:
         PIPENV_DEFAULT_PYTHON_VERSION: ${{ matrix.python-version }}
         PYTHONWARNINGS: ignore:DEPRECATION
         GIT_ASK_YESNO: 'false'
+        AWS_DEFAULT_REGION: eu-west-1
       run: |
         pipenv run pytest
