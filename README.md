@@ -251,3 +251,8 @@ Scratch
 [2020-06-28 19:58:54,144] pudli/INFO/root: POST    /post                                                     251     150.0    157.74    142.16   1087.47       8.39
 [2020-06-28 19:58:54,144] pudli/INFO/root: Exiting...
 ```
+
+### Occasional errors 
+
+*  ERROR : `xxxxx-3f19-11e7-a1d1-xxxxxxx Process exited before completing request"`
+    - SOLUTION: Double the size of the memory for the function.
