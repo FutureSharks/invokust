@@ -156,7 +156,7 @@ json.loads(response['Payload'].read())
 
 ### Running a real load test
 
-Lambda function execution time is limited to a maximum of 5 minutes. To run a real load test the function will need to be invoked repeatedly and likely in parallel to generate enough load. To manage this there is a class called `LambdaLoadTest` that can manage invoking the function in parallel loops and collecting the statistics.
+Lambda function execution time is limited to a maximum of 15 minutes. To run a real load test the function will need to be invoked repeatedly and likely in parallel to generate enough load. To manage this there is a class called `LambdaLoadTest` that can manage invoking the function in parallel loops and collecting the statistics.
 
 ```python
 import logging
