@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import os
 import json
 import time
 import logging
@@ -12,7 +13,13 @@ logger = logging.getLogger(__name__)
 logging.getLogger("botocore").setLevel(logging.CRITICAL)
 
 session = Session()
-config = Config(connect_timeout=10, read_timeout=310)
+config = Config(
+    connect_timeout=os.environ.get('BOTO_CONFIG_CONNECT_TIMEOUT', 10),
+    read_timeout=os.environ.get('BOTO_CONFIG_READ_TIMEOUT', 310),
+    retries=json.loads(
+        os.environ.get('BOTO_CONFIG_RETRIES', '{"max_attempts": 3}')
+    )
+)
 client = session.client("lambda", config=config)
 
 
