@@ -85,7 +85,7 @@ pip3 install invokust --target=python-packages
 Or if running on a Mac (python packages need to be compiled for 64 bit Linux) you can use docker:
 
 ```
-docker run -it --volume=$PWD:/temp python:3.6 bash -c "pip install /temp --target=/temp/python-packages"
+docker run -it --volume=$PWD:/temp python:3.7 bash -c "pip install /temp --target=/temp/python-packages"
 ```
 
 Create the zip file:
@@ -97,7 +97,7 @@ zip -q -r lambda_locust.zip lambda_locust.py locustfile_example.py python-packag
 Then create the Lambda function using using the AWS CLI:
 
 ```
-aws lambda create-function --function-name lambda_locust --timeout 300 --runtime python3.6 --role arn:aws:iam::9999999999:role/lambda_basic_execution --handler lambda_locust.handler --zip-file fileb://lambda_locust.zip
+aws lambda create-function --function-name lambda_locust --timeout 300 --runtime python3.7 --role arn:aws:iam::9999999999:role/lambda_basic_execution --handler lambda_locust.handler --zip-file fileb://lambda_locust.zip
 ```
 
 Or [Terraform](https://www.terraform.io/) and the example [main.tf](main.tf) file:
@@ -252,7 +252,7 @@ Scratch
 [2020-06-28 19:58:54,144] pudli/INFO/root: Exiting...
 ```
 
-### Occasional errors 
+### Occasional errors
 
 *  ERROR : `xxxxx-3f19-11e7-a1d1-xxxxxxx Process exited before completing request"`
     - SOLUTION: Double the size of the memory for the function.
