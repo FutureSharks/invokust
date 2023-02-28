@@ -19,7 +19,7 @@ setup(
         "invokust",
         "invokust.aws_lambda",
     ],
-    install_requires=["locust>=1.4.1", "boto3", "pyzmq", "numpy"],
+    install_requires=["locust>=2.15.0", "boto3", "pyzmq", "numpy"],
     keywords=["testing", "loadtest", "lambda", "locust"],
     classifiers=[
         "Topic :: Software Development :: Quality Assurance",
