@@ -65,8 +65,8 @@ class LocustLoadTest(object):
                 "total_rpm": value.total_rps * 60,
             }
 
-        for id, error in self.env.runner.errors.items():
-            error_dict = error.to_dict()
+        for _, error in self.env.runner.errors.items():
+            error_dict = error.serialize()
             locust_task_name = "{0}_{1}".format(
                 error_dict["method"], error_dict["name"]
             )
