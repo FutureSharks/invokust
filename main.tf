@@ -50,7 +50,7 @@ resource "aws_lambda_function" "lambda_locust" {
   function_name = "lambda_locust"
   role          = "${aws_iam_role.lambda_basic_execution.arn}"
   handler       = "lambda_locust.handler"
-  runtime       = "python3.6"
+  runtime       = "python3.7"
   timeout       = 300
   description   = "A function that runs a locust load test"
   environment {
